@@ -1,0 +1,286 @@
+steps,exit_code,output,errors
+5,0,"Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit
+
+Enter command: 
+Enter command: // Typical evolution to sphere
+Enter command: gogo := { g 5; r; g 5; hessian; r; g 5; hessian; }
+Enter command: 
+Enter command: // Evolution to very high accuracy, using higher-order Lagrange elements.
+Enter command: // To be run on original datafile.
+Enter command: gogo2 := { g 5; r; g 5; hessian; r; g 5; hessian;
+more>            lagrange 2; g 5; hessian; 
+more>            lagrange 4; g 5; hessian; 
+more>            lagrange 6; g 5; hessian; 
+more>            ideal_rad := (3*body[1].volume/4/pi)^(1/3);
+more>            printf ""Area error: %g\n"",total_area - 4*pi*ideal_rad^2;
+more>            printf ""Vertex radius spread: %g\n"",
+more>              max(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2))
+more>                - min(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2));
+more> }
+Enter command:   5. area:  5.13907252918614 energy:  5.13907252918614  scale: 0.185675
+  4. area:  5.11245608431459 energy:  5.11245608431459  scale: 0.219672
+  3. area:  5.11249312554369 energy:  5.11249312554369  scale: 0.204230
+  2. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.204134
+  1. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.0416708
+Enter command:      5.1124931277274
+Enter command: Enter new datafile name (none to continue, q to quit): Enter command: ",
+10,0,"Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit
+
+Enter command: 
+Enter command: // Typical evolution to sphere
+Enter command: gogo := { g 5; r; g 5; hessian; r; g 5; hessian; }
+Enter command: 
+Enter command: // Evolution to very high accuracy, using higher-order Lagrange elements.
+Enter command: // To be run on original datafile.
+Enter command: gogo2 := { g 5; r; g 5; hessian; r; g 5; hessian;
+more>            lagrange 2; g 5; hessian; 
+more>            lagrange 4; g 5; hessian; 
+more>            lagrange 6; g 5; hessian; 
+more>            ideal_rad := (3*body[1].volume/4/pi)^(1/3);
+more>            printf ""Area error: %g\n"",total_area - 4*pi*ideal_rad^2;
+more>            printf ""Vertex radius spread: %g\n"",
+more>              max(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2))
+more>                - min(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2));
+more> }
+Enter command:  10. area:  5.13907252918614 energy:  5.13907252918614  scale: 0.185675
+  9. area:  5.11245608431459 energy:  5.11245608431459  scale: 0.219672
+  8. area:  5.11249312554369 energy:  5.11249312554369  scale: 0.204230
+  7. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.204134
+  6. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.0416708
+  5. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.00463054
+  4. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  3. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  2. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  1. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+Enter command:      5.1124931277274
+Enter command: Enter new datafile name (none to continue, q to quit): Enter command: ",
+20,0,"Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit
+
+Enter command: 
+Enter command: // Typical evolution to sphere
+Enter command: gogo := { g 5; r; g 5; hessian; r; g 5; hessian; }
+Enter command: 
+Enter command: // Evolution to very high accuracy, using higher-order Lagrange elements.
+Enter command: // To be run on original datafile.
+Enter command: gogo2 := { g 5; r; g 5; hessian; r; g 5; hessian;
+more>            lagrange 2; g 5; hessian; 
+more>            lagrange 4; g 5; hessian; 
+more>            lagrange 6; g 5; hessian; 
+more>            ideal_rad := (3*body[1].volume/4/pi)^(1/3);
+more>            printf ""Area error: %g\n"",total_area - 4*pi*ideal_rad^2;
+more>            printf ""Vertex radius spread: %g\n"",
+more>              max(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2))
+more>                - min(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2));
+more> }
+Enter command:  20. area:  5.13907252918614 energy:  5.13907252918614  scale: 0.185675
+ 19. area:  5.11245608431459 energy:  5.11245608431459  scale: 0.219672
+ 18. area:  5.11249312554369 energy:  5.11249312554369  scale: 0.204230
+ 17. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.204134
+ 16. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.0416708
+ 15. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.00463054
+ 14. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 13. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 12. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 11. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 10. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  9. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  8. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  7. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  6. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  5. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  4. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  3. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  2. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  1. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+Enter command:      5.1124931277274
+Enter command: Enter new datafile name (none to continue, q to quit): Enter command: ",
+50,0,"Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit
+
+Enter command: 
+Enter command: // Typical evolution to sphere
+Enter command: gogo := { g 5; r; g 5; hessian; r; g 5; hessian; }
+Enter command: 
+Enter command: // Evolution to very high accuracy, using higher-order Lagrange elements.
+Enter command: // To be run on original datafile.
+Enter command: gogo2 := { g 5; r; g 5; hessian; r; g 5; hessian;
+more>            lagrange 2; g 5; hessian; 
+more>            lagrange 4; g 5; hessian; 
+more>            lagrange 6; g 5; hessian; 
+more>            ideal_rad := (3*body[1].volume/4/pi)^(1/3);
+more>            printf ""Area error: %g\n"",total_area - 4*pi*ideal_rad^2;
+more>            printf ""Vertex radius spread: %g\n"",
+more>              max(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2))
+more>                - min(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2));
+more> }
+Enter command:  50. area:  5.13907252918614 energy:  5.13907252918614  scale: 0.185675
+ 49. area:  5.11245608431459 energy:  5.11245608431459  scale: 0.219672
+ 48. area:  5.11249312554369 energy:  5.11249312554369  scale: 0.204230
+ 47. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.204134
+ 46. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.0416708
+ 45. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.00463054
+ 44. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 43. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 42. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 41. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 40. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 39. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 38. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 37. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 36. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 35. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 34. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 33. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 32. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 31. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 30. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 29. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 28. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 27. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 26. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 25. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 24. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 23. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 22. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 21. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 20. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 19. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 18. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 17. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 16. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 15. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 14. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 13. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 12. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 11. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 10. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  9. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  8. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  7. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  6. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  5. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  4. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  3. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  2. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  1. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+Enter command:      5.1124931277274
+Enter command: Enter new datafile name (none to continue, q to quit): Enter command: ",
+100,0,"Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit
+
+Enter command: 
+Enter command: // Typical evolution to sphere
+Enter command: gogo := { g 5; r; g 5; hessian; r; g 5; hessian; }
+Enter command: 
+Enter command: // Evolution to very high accuracy, using higher-order Lagrange elements.
+Enter command: // To be run on original datafile.
+Enter command: gogo2 := { g 5; r; g 5; hessian; r; g 5; hessian;
+more>            lagrange 2; g 5; hessian; 
+more>            lagrange 4; g 5; hessian; 
+more>            lagrange 6; g 5; hessian; 
+more>            ideal_rad := (3*body[1].volume/4/pi)^(1/3);
+more>            printf ""Area error: %g\n"",total_area - 4*pi*ideal_rad^2;
+more>            printf ""Vertex radius spread: %g\n"",
+more>              max(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2))
+more>                - min(vertex,sqrt((x-.5)^2+(y-.5)^2+(z-.5)^2));
+more> }
+Enter command: 100. area:  5.13907252918614 energy:  5.13907252918614  scale: 0.185675
+ 99. area:  5.11245608431459 energy:  5.11245608431459  scale: 0.219672
+ 98. area:  5.11249312554369 energy:  5.11249312554369  scale: 0.204230
+ 97. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.204134
+ 96. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.0416708
+ 95. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.00463054
+ 94. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 93. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 92. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 91. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 90. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 89. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 88. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 87. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 86. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 85. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 84. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 83. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 82. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 81. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 80. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 79. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 78. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 77. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 76. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 75. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 74. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 73. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 72. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 71. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 70. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 69. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 68. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 67. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 66. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 65. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 64. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 63. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 62. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 61. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 60. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 59. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 58. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 57. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 56. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 55. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 54. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 53. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 52. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 51. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 50. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 49. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 48. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 47. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 46. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 45. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 44. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 43. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 42. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 41. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 40. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 39. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 38. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 37. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 36. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 35. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 34. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 33. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 32. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 31. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 30. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 29. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 28. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 27. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 26. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 25. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 24. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 23. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 22. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 21. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 20. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 19. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 18. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 17. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 16. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 15. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 14. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 13. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 12. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 11. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+ 10. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  9. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  8. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  7. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  6. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  5. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  4. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  3. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  2. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+  1. area:  5.11249312772740 energy:  5.11249312772740  scale: 0.000000
+Enter command:      5.1124931277274
+Enter command: Enter new datafile name (none to continue, q to quit): Enter command: ",

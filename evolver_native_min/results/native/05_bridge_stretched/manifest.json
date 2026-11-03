@@ -1,0 +1,39 @@
+{
+  "backend": "surface_evolver",
+  "model": "C:\\...\\evolver_native_min\\models\\05_bridge_stretched.fe",
+  "command_file": "C:\\...\\evolver_native_min\\results\\native\\05_bridge_stretched\\run.cmd",
+  "model_sha256": "63d433ad76790ff36e9a3ebb35fc09f15289083e9735c3776faee51b5690f1c2",
+  "command_sha256": "42c3500ca68230a50e2fae9d153c9a0e98e4bb651ce9585af0cfa44f120b12ad",
+  "native_evolver_executed": true,
+  "status": "executed",
+  "desired_command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\05_bridge_stretched\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\05_bridge_stretched.fe"
+  ],
+  "numerical_pass": false,
+  "physical_validation": false,
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\05_bridge_stretched\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\05_bridge_stretched.fe"
+  ],
+  "returncode": 0,
+  "wall_seconds": 12.306993399997737,
+  "metrics": {
+    "initial_energy": 7.786358062337856,
+    "initial_volume": -3.4882428980082256,
+    "energy": 21.572557488472995,
+    "energy_drift": 1.369513270193079e-05,
+    "max_move": 0.004258529242060267,
+    "area": 21.572557488472995,
+    "facets": 6144.0,
+    "volume": 3.141592653589793,
+    "pressure": 2.0433344112138547,
+    "complete": 1.0
+  },
+  "volume_relative_error": 0.0,
+  "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+}

@@ -1,0 +1,41 @@
+[
+  {
+    "backend": "surface_evolver",
+    "model": "C:\\...\\evolver_native_min\\models\\09_hard_pad.fe",
+    "command_file": "C:\\...\\evolver_native_min\\results\\native\\09_hard_pad\\run.cmd",
+    "model_sha256": "5eeb60199619fa18c6e8e44bc44a798138e4a7714e8aa27f4f2cf30afc027493",
+    "command_sha256": "42c3500ca68230a50e2fae9d153c9a0e98e4bb651ce9585af0cfa44f120b12ad",
+    "native_evolver_executed": true,
+    "status": "executed",
+    "desired_command": [
+      "C:\\Evolver\\evolver.exe",
+      "-x",
+      "-fC:\\...\\evolver_native_min\\results\\native\\09_hard_pad\\run.cmd",
+      "C:\\...\\evolver_native_min\\models\\09_hard_pad.fe"
+    ],
+    "numerical_pass": false,
+    "physical_validation": false,
+    "command": [
+      "C:\\Evolver\\evolver.exe",
+      "-x",
+      "-fC:\\...\\evolver_native_min\\results\\native\\09_hard_pad\\run.cmd",
+      "C:\\...\\evolver_native_min\\models\\09_hard_pad.fe"
+    ],
+    "returncode": 0,
+    "wall_seconds": 11.28504780000003,
+    "metrics": {
+      "initial_energy": 0.9823146248088372,
+      "initial_volume": 0.19582358810571623,
+      "energy": 0.9325387566419299,
+      "energy_drift": 2.4770754594844087e-05,
+      "max_move": 0.0009332795254269992,
+      "area": 1.3249575319178397,
+      "facets": 5760.0,
+      "volume": 0.19998978335030337,
+      "pressure": 3.367995456640421,
+      "complete": 1.0
+    },
+    "volume_relative_error": 5.1083248483185795e-05,
+    "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+  }
+]

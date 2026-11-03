@@ -1,0 +1,39 @@
+{
+  "backend": "surface_evolver",
+  "model": "C:\\...\\evolver_native_min\\models\\08_patterned_overfill.fe",
+  "command_file": "C:\\...\\evolver_native_min\\results\\native\\08_patterned_overfill\\run.cmd",
+  "model_sha256": "0a9170ca0df545c5ff469edc4903cb05ab69d639e3ba037693a3901c4bbe2310",
+  "command_sha256": "42c3500ca68230a50e2fae9d153c9a0e98e4bb651ce9585af0cfa44f120b12ad",
+  "native_evolver_executed": true,
+  "status": "executed",
+  "desired_command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\08_patterned_overfill\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\08_patterned_overfill.fe"
+  ],
+  "numerical_pass": false,
+  "physical_validation": false,
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\08_patterned_overfill\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\08_patterned_overfill.fe"
+  ],
+  "returncode": 0,
+  "wall_seconds": 9.322506699998485,
+  "metrics": {
+    "initial_energy": 4.186718515469306,
+    "initial_volume": 0.8812061464757228,
+    "energy": 3.8089019754476015,
+    "energy_drift": 0.00014066638310514056,
+    "max_move": 0.0004808018836319029,
+    "area": 4.199269150079474,
+    "facets": 5760.0,
+    "volume": 0.9,
+    "pressure": 2.819649013745651,
+    "complete": 1.0
+  },
+  "volume_relative_error": 0.0,
+  "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+}

@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcbsim-pipeline"
+version = "0.1.0"
+description = "Independent PCB solder simulation components and experiment orchestration"
+readme = {text = "PCB solder simulation pipeline. See the project documentation folder for setup, operation, configuration, and model limitations.", content-type = "text/plain"}
+requires-python = ">=3.11,<3.14"
+dependencies = ["numpy>=1.26,<3", "scipy>=1.11,<2"]
+
+[project.optional-dependencies]
+cad = ["cadquery>=2.8,<2.9"]
+test = ["pytest>=8,<10"]
+
+[project.scripts]
+pcbsim-run = "pcbsim.cli:run"
+pcbsim-doctor = "pcbsim.cli:doctor"
+pcbsim-evaluate = "pcbsim.cli:evaluate"
+
+[tool.setuptools.packages.find]
+include = ["pcbsim*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m 'not slow and not native'"
+markers = [
+  "slow: integration with the supplied full 420-solid PCB assembly",
+  "native: requires an installed real Surface Evolver executable",
+  "cad: requires CadQuery/Open CASCADE",
+  "protocol: tests a stubbed external-process protocol, not native physics"
+]
+
+[tool.setuptools.package-data]
+"pcbsim._vendor" = ["ORIGIN.json"]

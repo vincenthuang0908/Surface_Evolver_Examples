@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "method": "Extracted archive into a fresh child project folder; removed PYTHONPATH; invoked standalone CLI and manager without parent source files. Existing environment supplies installed dependencies.",
+  "checks": [
+    {
+      "command": "python -m pcbsim.doctor --without-native",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python run_pipeline.py --config pipeline.json --only material_manager --experiments-dir /mnt/data/work/dropin_material_test",
+      "returncode": 0,
+      "passed": true
+    }
+  ]
+}

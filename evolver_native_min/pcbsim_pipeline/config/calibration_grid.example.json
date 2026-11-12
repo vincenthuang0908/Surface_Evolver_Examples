@@ -1,0 +1,13 @@
+{
+  "maximum_runs": 4,
+  "parameters": {
+    "steps.material_manager.material.pin_contact_angle_deg": [
+      75,
+      85
+    ],
+    "steps.material_manager.simulation.fillet_volume_mm3": [
+      0.02,
+      0.03
+    ]
+  }
+}

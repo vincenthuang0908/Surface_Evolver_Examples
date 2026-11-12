@@ -4,8 +4,7 @@ In the `evolver_native_min` folder.
 
 Setting up venv, dependencies, and generating .fe models:
 ```powershell
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\setup_venv.bat
 .\.venv\Scripts\python.exe generate_models.py
 ```
 
@@ -24,3 +23,19 @@ replaces the `.fe` and `.json` files, so preserve any custom edits first.
 
 Outputs are written to `results/native/<model_name>/`. Inspect `stdout.log`
 and `manifest.json` for native errors and numerical acceptance checks.
+
+To run an entire pipeline from pcbsim_pipeline:
+
+After activating venv:
+
+```powershell
+cd .\pcbsim_pipeline\pcbsim_pipeline
+python run_pipeline.py --config pipeline.json
+```
+
+Alternatively just run:
+
+```powershell
+.\run_pipeline.bat
+```
+

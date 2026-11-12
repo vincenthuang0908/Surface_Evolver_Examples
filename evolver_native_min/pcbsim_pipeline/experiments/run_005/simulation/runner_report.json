@@ -1,0 +1,38 @@
+{
+  "backend": "vendored_evolver_native_min_adapter",
+  "backend_source_sha256": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\run.cmd",
+    "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\fe\\model.fe"
+  ],
+  "command_sha256": "41d96fb80e0a6fbf1529c26d4ecacffd6aaebaafb296b50b13115af14380d318",
+  "component": "surface_evolver",
+  "duration_seconds": 42.430816300002334,
+  "ended_at": "2026-11-11T14:28:59.310+00:00",
+  "executable": "C:\\Evolver\\evolver.exe",
+  "executable_sha256": "c669f120c1d32536bc54d7a0f69e71f5e2c3c802c132b4419c028d692f024202",
+  "model_sha256": "7fa31206edb8db4175c7e20a5ba1d6061e97ea5b7f013e0ce3ac9d93bf9831b2",
+  "native_evolver_executed": true,
+  "numerical_pass": true,
+  "numpy_version": "2.5.4",
+  "outputs": {
+    "commands": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\run.cmd",
+    "mesh": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\solder_mesh.off",
+    "mesh_arrays": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\mesh.npz",
+    "metrics": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\metrics.json",
+    "model_snapshot": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\input_model.fe",
+    "stdout": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_005\\simulation\\stdout.log"
+  },
+  "physical_validation": false,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python_version": "3.12.10",
+  "returncode": 0,
+  "schema_version": 1,
+  "seed": 0,
+  "solver_banner": "Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit",
+  "started_at": "2026-11-11T14:28:16.879+00:00",
+  "status": "success",
+  "warnings": []
+}

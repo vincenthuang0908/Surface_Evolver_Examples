@@ -1,0 +1,16 @@
+{
+  "source_archive": "evolver_native_min.zip",
+  "original_directory": "pcb_evolver",
+  "files_sha256": {
+    "__init__.py": "5ccf0653313b9ffa97c655f57c24d0b791577235d6ceb1891df3ceacb7ef954e",
+    "geometry.py": "c233dfd2dce7eb51c5f3b4b9c8682b9a2235e84b178216c58ac1601cc357fd9a",
+    "native.py": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+    "models.py": "9f3303a842e25b8fe3e5b49031ce27efb6ce8eef5f98d5a6c23a24947afde57d"
+  },
+  "modifications": "No changes to the copied source files. Wrapper adaptations live in pcbsim/components/surface_evolver_runner.py.",
+  "reused_symbols": [
+    "native.commands",
+    "native.parse_output",
+    "models.topology"
+  ]
+}

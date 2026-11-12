@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "inputs": {
+    "model_file": "../../models/10_pin_fillet.fe"
+  },
+  "experiments_dir": "../experiments",
+  "steps": {
+    "cad_extractor": {
+      "enabled": false
+    },
+    "material_manager": {
+      "enabled": false
+    },
+    "fe_generator": {
+      "enabled": false
+    },
+    "surface_evolver": {
+      "enabled": true,
+      "executable": "auto",
+      "timeout_seconds": 180,
+      "refinements": 2,
+      "minimization_steps": 300,
+      "warmup_steps": 30,
+      "allow_warnings": false,
+      "edge_swaps": true,
+      "require_numerical_pass": true,
+      "volume_relative_tolerance": 1e-07,
+      "energy_drift_tolerance": 1e-07,
+      "max_move_tolerance_mm": 1e-05
+    },
+    "cad_converter": {
+      "enabled": false
+    },
+    "evaluation": {
+      "enabled": false
+    }
+  }
+}

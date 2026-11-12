@@ -1,0 +1,69 @@
+{
+  "status": "success",
+  "checks": [
+    {
+      "command": "python -m pcbsim.components.cad_extractor --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.material_manager --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.fe_generator --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.surface_evolver_runner --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.cad_converter --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.evaluation --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.experiment_manager --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.components.calibration --help",
+      "returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python run_pipeline.py --help",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python reproduce.py --help",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.doctor --without-native",
+      "returncode": 0,
+      "expected_returncode": 0,
+      "passed": true
+    },
+    {
+      "command": "python -m pcbsim.doctor --config pipeline.json",
+      "returncode": 1,
+      "expected_returncode": 1,
+      "passed": true
+    }
+  ]
+}

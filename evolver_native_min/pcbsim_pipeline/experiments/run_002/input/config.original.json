@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "inputs": {"step_file": "inputs/raspberry_pico_2H.step"},
+  "experiments_dir": "experiments",
+  "steps": {
+    "cad_extractor": {"enabled": true, "selection": {"type": "through_hole_connection", "pin_index": 1, "include": ["pad", "hole", "pin", "pcb_section"]}, "pcb_section_size_mm": 3.0, "solder_side": "top"},
+    "material_manager": {"enabled": true, "material": {"name": "illustrative_solder_not_calibrated", "surface_tension_N_per_m": 0.5, "density_kg_per_m3": 7400.0, "pin_contact_angle_deg": 80.0}, "simulation": {"fillet_volume_mm3": 0.025, "volume_multiplier": 1.0, "contact_angle_delta_deg": 0.0, "gravity_m_per_s2": 0.0, "seed": 0, "barrel_fill": "full", "pin_contact_line": "mobile"}},
+    "fe_generator": {"enabled": true, "radial_segments": 5, "segments_per_pin_side": 8, "initial_perturbation_mm": 0.0},
+    "surface_evolver": {"enabled": true, "executable": "C:\\Evolver\\evolver.exe", "timeout_seconds": 180, "refinements": 1, "minimization_steps": 300, "warmup_steps": 30, "allow_warnings": false, "edge_swaps": false, "require_numerical_pass": true, "volume_relative_tolerance": 1e-7, "energy_drift_tolerance": 1e-7, "max_move_tolerance_mm": 1e-5},
+    "cad_converter": {"enabled": true, "mesh_tolerance_mm": 0.01, "sewing_tolerance_mm": 1e-7, "validate_mesh": true, "preserve_original_geometry": true, "output_filename": "pcb_with_solder.step", "check_self_intersections": true, "maximum_faces": 20000},
+    "evaluation": {"enabled": true, "require_numerical_pass": true, "relative_tolerance": 1e-6, "absolute_tolerance": 1e-8, "mesh_distance_tolerance_mm": 1e-6}
+  }
+}

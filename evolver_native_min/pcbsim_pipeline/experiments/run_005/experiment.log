@@ -1,0 +1,29 @@
+2026-11-11T09:27:57 [INFO] [Experiment Manager] Experiment run_005 started
+2026-11-11T09:27:57 [INFO] [cad_extractor] Started
+2026-11-11T09:27:57 [INFO] [cad_extractor] Loading STEP and detecting connections: C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\experiments\run_005\input\original.step
+2026-11-11T09:28:16 [INFO] [cad_extractor] Extracted connection 1 of 40
+2026-11-11T09:28:16 [INFO] [cad_extractor] Completed successfully
+2026-11-11T09:28:16 [INFO] [material_manager] Started
+2026-11-11T09:28:16 [INFO] [material_manager] Wrote normalized material and simulation settings
+2026-11-11T09:28:16 [INFO] [material_manager] Completed successfully
+2026-11-11T09:28:16 [INFO] [fe_generator] Started
+2026-11-11T09:28:16 [INFO] [fe_generator] Generated 320 vertices / 640 triangles; no simulation has been executed
+2026-11-11T09:28:16 [INFO] [fe_generator] Completed successfully
+2026-11-11T09:28:16 [INFO] [surface_evolver] Started
+2026-11-11T09:28:16 [INFO] [surface_evolver] Executing Surface Evolver: C:\Evolver\evolver.exe
+2026-11-11T09:28:59 [INFO] [surface_evolver] Native execution complete; numerical_pass=True
+2026-11-11T09:28:59 [INFO] [surface_evolver] Completed successfully
+2026-11-11T09:28:59 [INFO] [cad_converter] Started
+2026-11-11T09:29:00 [INFO] [cad_converter] Reconstructing 2560 triangular CAD faces
+2026-11-11T09:29:04 [ERROR] [Experiment Manager] Experiment failed in cad_converter: OCCT detected self-interference or small-edge invalidity in the solder solid
+2026-11-11T09:29:04 [ERROR] Traceback (most recent call last):
+  File "C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\pcbsim\components\experiment_manager.py", line 201, in run_pipeline
+    stage = convert_cad(run/"simulation/solder_mesh.off", run/"input/original.step", run/"geometry/geometry.json", effective, run/"output"/filename, component_log)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\pcbsim\components\cad_converter.py", line 119, in convert_cad
+    solder = mesh_to_solid(world, f, sewing_tol, check_si)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\pcbsim\components\cad_converter.py", line 40, in mesh_to_solid
+    raise ComponentError("OCCT detected self-interference or small-edge invalidity in the solder solid")
+pcbsim.common.ComponentError: OCCT detected self-interference or small-edge invalidity in the solder solid
+

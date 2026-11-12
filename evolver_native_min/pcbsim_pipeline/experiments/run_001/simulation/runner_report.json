@@ -1,0 +1,25 @@
+{
+  "backend": "vendored_evolver_native_min_adapter",
+  "backend_source_sha256": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+  "command_sha256": "6e835e25ee07fa1d6e5ed5eeaebf5912012025688bb5669cd20d09788935010b",
+  "component": "surface_evolver",
+  "duration_seconds": 0.026116699998965487,
+  "ended_at": "2026-11-11T13:23:12.755+00:00",
+  "error": "Surface Evolver was not found. Install it or set steps.surface_evolver.executable / SURFACE_EVOLVER_EXE. No fallback simulation was performed.",
+  "model_sha256": "7fa31206edb8db4175c7e20a5ba1d6061e97ea5b7f013e0ce3ac9d93bf9831b2",
+  "native_evolver_executed": false,
+  "numerical_pass": false,
+  "numpy_version": "2.5.4",
+  "outputs": {
+    "commands": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\pcbsim_pipeline\\experiments\\run_001\\simulation\\run.cmd",
+    "model_snapshot": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\pcbsim_pipeline\\experiments\\run_001\\simulation\\input_model.fe"
+  },
+  "physical_validation": false,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python_version": "3.12.10",
+  "schema_version": 1,
+  "seed": 0,
+  "started_at": "2026-11-11T13:23:12.728+00:00",
+  "status": "unavailable",
+  "warnings": []
+}

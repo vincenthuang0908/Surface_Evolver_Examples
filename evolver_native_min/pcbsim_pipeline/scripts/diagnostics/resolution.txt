@@ -1,0 +1,41 @@
+﻿Solder pipeline diagnosis and resolution (2026-11-11)
+
+Successful full experiment: ../experiments/run_006
+All stages completed. Native Surface Evolver, CAD reconstruction and all four
+pipeline evaluation checks passed. Default test suite: 64 passed, 2 deselected.
+
+Original failure: runs 003 and 004 used the relaxation count as the movement
+measurement window, so raising it from 300 to 1000 also changed the convergence
+criterion's measurement interval. Both failed the displacement gate.
+
+Resolution: separate fixed 30-step checks from relaxation batches; enable
+conjugate gradient; retry failed checks within bounded budgets; require two
+consecutive passes. Equiangulate only edges having liquid-air facets on both
+sides before retries and reset conjugate-gradient history. No swaps across
+surface-region boundaries. Original numerical tolerances remain unchanged.
+No pin-wall freezing or normal-motion restriction is used in the final solution.
+
+A diagnostic full run (005) converged but produced skinny triangles rejected by
+CAD validity checks. Region-preserving mesh improvement resolved that problem.
+Run 006 preserved all 420 original CAD solids and added one solder solid.
+The output was reopened and original geometry and solder triangles verified.
+No original-solid volumetric interference was found in tested nearby solids.
+
+Outputs:
+../experiments/run_006/output/pcb_with_solder.step
+../experiments/run_006/output/solder_only.step
+../experiments/run_006/simulation/metrics.json
+../experiments/run_006/evaluation/automated_test_results.json
+solder_joint.png (local-coordinate visualization; pin walls translucent)
+
+Run again using the existing run_pipeline.bat launcher. Each run uses a new
+experiment directory. The timeout is now 300 seconds; 10 bounded convergence
+check attempts are allowed. The successful run took about 114 seconds overall.
+
+Scope: fixed fully filled barrel plus one top-side fillet, pinned outer pad
+perimeter, mobile contact line on the extracted rectangular pin. Solder material
+parameters remain illustrative and uncalibrated. Numerical convergence and CAD
+validity do not establish experimental accuracy or mesh independence.
+
+Diagnostic helper programs are under tools/. Run them with scripts/ as cwd;
+they preserve their old fixed output directories and cannot all be rerun as-is.

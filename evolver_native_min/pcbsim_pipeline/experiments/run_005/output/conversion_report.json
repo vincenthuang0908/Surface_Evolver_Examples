@@ -1,0 +1,8 @@
+{
+  "component": "cad_converter",
+  "duration_seconds": 4.732146399997873,
+  "error": "OCCT detected self-interference or small-edge invalidity in the solder solid",
+  "outputs": {},
+  "schema_version": 1,
+  "status": "failed"
+}

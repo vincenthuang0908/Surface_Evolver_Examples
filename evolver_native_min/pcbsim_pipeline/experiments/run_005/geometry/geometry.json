@@ -1,0 +1,133 @@
+{
+  "coordinate_system": {
+    "description": "Origin at pad/hole center on top copper; local +Z points away from board",
+    "frame": "local_pad_top",
+    "local_to_world": [
+      [
+        1.0,
+        0.0,
+        0.0,
+        -8.89
+      ],
+      [
+        0.0,
+        1.0,
+        0.0,
+        24.13
+      ],
+      [
+        0.0,
+        0.0,
+        1.0,
+        0.05
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ]
+  },
+  "extracted_step_sha256": "1c3dde8b76c3dcce3306d796691c682d4aa087971b54f2e18ef53ec0bc45a90c",
+  "hole": {
+    "depth_mm": 1.1,
+    "pcb_drill_radius_mm": 0.55,
+    "provenance": "Inner plated bore; PCB drill is separately recorded",
+    "radius_mm": 0.5
+  },
+  "model_family": "rectangular_pin_circular_plated_hole",
+  "original_selected_solids": {
+    "pad": {
+      "bounds_mm": [
+        -9.59,
+        23.43,
+        -1.0500001,
+        -8.19,
+        24.83,
+        0.050000100000000006
+      ],
+      "center_mm": [
+        -8.890000000000002,
+        24.130000000000006,
+        -0.493872549019608
+      ],
+      "face_count": 10,
+      "volume_mm3": 0.2403318379996192
+    },
+    "pin": {
+      "bounds_mm": [
+        -9.21,
+        23.81,
+        -9.6,
+        -8.57,
+        24.45,
+        0.39999999999999997
+      ],
+      "center_mm": [
+        -8.89,
+        24.13,
+        -4.6
+      ],
+      "face_count": 14,
+      "volume_mm3": 4.014933333333335
+    }
+  },
+  "pad": {
+    "outer_radius_mm": 0.7,
+    "provenance": "Concentric cylindrical outer boundary of matched source pad solid",
+    "top_z_mm": 0.0
+  },
+  "pcb": {
+    "section_size_mm": 3.0,
+    "thickness_mm": 1.0
+  },
+  "pin": {
+    "center_xy_mm": [
+      0.0,
+      0.0
+    ],
+    "cross_section": "rectangle",
+    "depth_mm": 0.6400000000000006,
+    "max_straight_height_mm": 0.15000000000000108,
+    "provenance": "Bounding box and four planar sidewalls; beveled tip excluded from allowable wetting height",
+    "width_mm": 0.6400000000000006
+  },
+  "schema_version": 1,
+  "selection": {
+    "board_solid_index": 0,
+    "center_xy_mm": [
+      -8.89,
+      24.13
+    ],
+    "hole_radius_mm": 0.5,
+    "pad_bottom_z_mm": -1.05,
+    "pad_radius_mm": 0.7,
+    "pad_solid_index": 7,
+    "pad_top_z_mm": 0.05,
+    "pcb_drill_radius_mm": 0.55,
+    "pin_center_xy_mm": [
+      -8.89,
+      24.13
+    ],
+    "pin_depth_mm": 0.6400000000000006,
+    "pin_index": 1,
+    "pin_solid_index": 379,
+    "pin_straight_z_range_mm": [
+      -9.4,
+      0.20000000000000107
+    ],
+    "pin_width_mm": 0.6400000000000006
+  },
+  "source": {
+    "filename": "original.step",
+    "sha256": "5426d6ba3c4865ab9a7572f9e18d1065e1771cbc132d6f2ae0a6c3b9ee88757a",
+    "solid_count": 420
+  },
+  "units": "mm",
+  "validation": {
+    "hole_preserved": true,
+    "step_reopened": true,
+    "void_overlap_mm3": 0.0
+  }
+}

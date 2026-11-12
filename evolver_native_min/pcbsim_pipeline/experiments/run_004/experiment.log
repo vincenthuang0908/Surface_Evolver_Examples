@@ -1,0 +1,20 @@
+2026-11-11T09:14:45 [INFO] [Experiment Manager] Experiment run_004 started
+2026-11-11T09:14:45 [INFO] [cad_extractor] Started
+2026-11-11T09:14:45 [INFO] [cad_extractor] Loading STEP and detecting connections: C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\experiments\run_004\input\original.step
+2026-11-11T09:15:00 [INFO] [cad_extractor] Extracted connection 1 of 40
+2026-11-11T09:15:00 [INFO] [cad_extractor] Completed successfully
+2026-11-11T09:15:00 [INFO] [material_manager] Started
+2026-11-11T09:15:00 [INFO] [material_manager] Wrote normalized material and simulation settings
+2026-11-11T09:15:00 [INFO] [material_manager] Completed successfully
+2026-11-11T09:15:00 [INFO] [fe_generator] Started
+2026-11-11T09:15:01 [INFO] [fe_generator] Generated 320 vertices / 640 triangles; no simulation has been executed
+2026-11-11T09:15:01 [INFO] [fe_generator] Completed successfully
+2026-11-11T09:15:01 [INFO] [surface_evolver] Started
+2026-11-11T09:15:01 [INFO] [surface_evolver] Executing Surface Evolver: C:\Evolver\evolver.exe
+2026-11-11T09:15:21 [INFO] [surface_evolver] Native execution complete; numerical_pass=False
+2026-11-11T09:15:21 [ERROR] [Experiment Manager] Experiment failed in surface_evolver: Numerical gate failed; diagnostic mesh and metrics retained, CAD conversion blocked by default.
+2026-11-11T09:15:21 [ERROR] Traceback (most recent call last):
+  File "C:\Users\vince\OneDrive\Documents\vscode projects\NIST Surface Evolver\evolver_native_min\pcbsim_pipeline\pcbsim\components\experiment_manager.py", line 219, in run_pipeline
+    raise ComponentError(stage.get("error", f"{name} did not pass; inspect its component report"))
+pcbsim.common.ComponentError: Numerical gate failed; diagnostic mesh and metrics retained, CAD conversion blocked by default.
+

@@ -1,0 +1,21 @@
+services:
+  pipeline:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: pcbsim-pipeline:local
+    platform: linux/amd64
+    init: true
+    command: ["python", "-m", "streamlit", "run", "/app/dashboard/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true", "--server.runOnSave=true", "--server.fileWatcherType=poll", "--browser.gatherUsageStats=false"]
+    environment:
+      PYTHONPATH: /app
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - ../data:/data
+      # Live source mounts: Python edits need no image rebuild.
+      - ../dashboard:/app/dashboard:ro
+      - ../pcbsim_pipeline/pcbsim:/app/pcbsim:ro
+      - ../pcbsim_pipeline/run_pipeline.py:/app/run_pipeline.py:ro
+      - ../pcbsim_pipeline/reproduce.py:/app/reproduce.py:ro
+      - ../pcbsim_pipeline/tests:/app/tests:ro

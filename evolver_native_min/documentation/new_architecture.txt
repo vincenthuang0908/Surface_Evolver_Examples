@@ -1,0 +1,30 @@
+project/
+├── pcbsim_pipeline/
+│   ├── pcbsim/              # Existing pipeline implementation
+│   │   ├── components/      # Extraction → simulation → export → evaluation
+│   │   ├── _vendor/         # Helpers still required by the pipeline
+│   │   └── ...              # Shared CAD, mesh, configuration utilities
+│   ├── tests/               # Pipeline tests and required fixtures
+│   ├── inputs/              # Supplied example STEP
+│   ├── pipeline.json        # Default configuration
+│   ├── pyproject.toml       # Dependencies and package definition
+│   └── run_pipeline.py      # CLI entry point
+├── dashboard/
+│   ├── app.py               # Streamlit interface
+│   ├── job_runner.py        # Execution and process management
+│   └── test_dashboard.py
+├── docker/
+│   ├── Dockerfile
+│   └── compose.yaml
+├── data/                    # Generated files; excluded from Git
+│   ├── uploads/
+│   └── experiments/
+└── README.md                # Setup, usage, configuration, model limits
+
+The dashboard and CLI would both use the same pipeline. Calibration, evaluation, and reproduction remain available through the existing component APIs.
+
+Remove the standalone pcb_evolver/, generated models/, root config/native_models.json, generate_models.py, and run_native.py after confirming no remaining dependencies. Keep _vendor/: the current pipeline uses those copied helpers.
+
+Archive historical experiments and validation evidence outside the working repository, consolidate documentation into the README, and remove redundant batch scripts and diagnostic tools.
+
+This preserves the current functionality while separating implementation, interface, deployment, and generated data.

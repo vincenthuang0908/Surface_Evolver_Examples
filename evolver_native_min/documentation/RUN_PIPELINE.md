@@ -31,19 +31,15 @@ Use `pipeline.json` to select the geometry, material settings, and solver settin
    - `material.surface_tension_N_per_m` and `material.density_kg_per_m3`: material properties at the relevant temperature.
    - `simulation.fillet_volume_mm3`: top-fillet solder volume.
    - `simulation.gravity_m_per_s2`: gravity; zero disables it.
-3. **Run the pipeline** from `evolver_native_min/pcbsim_pipeline/scripts`:
+3. **Run the pipeline** from the repository root using Docker:
 
 ```powershell
-.\run_pipeline.bat
+docker compose -f docker/compose.yaml run --rm pipeline python run_pipeline.py --config /app/pipeline.docker.json
 ```
 
-4. **Alternatively**, from `evolver_native_min/pcbsim_pipeline`, with the environment activated, run:
+   Use the dashboard to change the STEP, connection index, volume, or contact angle interactively. Rebuild the image after editing the Docker baseline config. For a native Windows run, follow [SETUP.md](SETUP.md).
 
-```powershell
-python run_pipeline.py --config pipeline.json
-```
-
-5. **Inspect the newest `experiments/run_NNN/` folder** within `pcbsim_pipeline`:
+4. **Inspect the new run folder** under `data/experiments/`:
    - `exp_report.json`: overall outcome and any failed stage.
    - `output/pcb_with_solder.step`: original PCB assembly plus the solder joint.
    - `output/solder_only.step`: solder alone, including the filled barrel; no PCB or pin solid.
@@ -83,10 +79,10 @@ The measurement interface compares numerical quantities supplied in JSON; it doe
 }
 ```
 
-2. From `pcbsim_pipeline`, with the environment activated, evaluate a completed run (replace `run_006` with your run):
+2. From `pcbsim_pipeline`, with the environment activated, evaluate a completed run (replace `run_001` with your run):
 
 ```powershell
-python -m pcbsim.components.evaluation --config pipeline.json evaluate --experiment experiments/run_006 --measurements config/my_measurements.json
+python -m pcbsim.components.evaluation --config pipeline.json evaluate --experiment ../data/experiments/run_001 --measurements config/my_measurements.json
 ```
 
 3. Read `evaluation/automated_test_results.json` inside that run. For the example, a prediction of `0.057 mm` differs by `0.003 mm`, so it passes the `0.005 mm` tolerance. Passing this comparison establishes agreement for that quantity, not every aspect of the joint.
@@ -120,14 +116,14 @@ For example, with known solder volume, fit only the pin contact angle using thre
 2. From `pcbsim_pipeline`, with the environment activated, run the study into a new or empty output directory:
 
 ```powershell
-python -m pcbsim.components.calibration --config pipeline.json --grid config/my_calibration_grid.json --measurements config/my_measurements.json --output-dir calibration/study_001
+python -m pcbsim.components.calibration --config pipeline.json --grid config/my_calibration_grid.json --measurements config/my_measurements.json --output-dir ../data/calibration/study_001
 ```
 
-3. Inspect `calibration/study_001/calibration_report.json` for candidate errors, eligibility, and measurement agreement. If an eligible candidate exists, `best_pipeline.json` contains its settings. The original `pipeline.json` is unchanged.
+3. Inspect `../data/calibration/study_001/calibration_report.json` for candidate errors, eligibility, and measurement agreement. If an eligible candidate exists, `best_pipeline.json` contains its settings. The original `pipeline.json` is unchanged.
 4. Review the selected settings before using them. To run the selected configuration separately:
 
 ```powershell
-python run_pipeline.py --config calibration/study_001/best_pipeline.json
+python run_pipeline.py --config ../data/calibration/study_001/best_pipeline.json
 ```
 
 5. If the closest candidate is still outside tolerance, refine the plausible parameter range or reconsider measurements and model assumptions. Do not loosen tolerances simply to declare success.
@@ -187,17 +183,17 @@ Experiment 5 predicted almost the same overall joint dimensions, but its mesh co
 
 ### Important files and potential uses
 
-All experiment files are under `pcbsim_pipeline/experiments/run_006/`. The CAD files support visual inspection and downstream geometry work, while the saved measurements and inputs make the result traceable and useful as a reference for later studies.
+All experiment files are under `data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/`. The CAD files support visual inspection and downstream geometry work, while the saved measurements and inputs make the result traceable and useful as a reference for later studies.
 
-- **[output/pcb_with_solder.step](../pcbsim_pipeline/experiments/run_006/output/pcb_with_solder.step):** the original assembly with one added solder solid. Open it in CAD to inspect placement and clearance around the connection. The solder is separate, not fused into the PCB or pin.
-- **[output/solder_only.step](../pcbsim_pipeline/experiments/run_006/output/solder_only.step):** only the solder, including the filled barrel and top fillet, positioned in assembly coordinates. Use it for isolated shape inspection, section views, or as input geometry for a separate analysis with its own physics and material definitions.
-- **[simulation/solder_mesh.off](../pcbsim_pipeline/experiments/run_006/simulation/solder_mesh.off):** the final triangular solder surface in local pad coordinates. Use it to visualize the relaxed shape or compare meshes; pair it with the coordinate transform in `geometry/geometry.json` for assembly placement.
-- **[simulation/metrics.json](../pcbsim_pipeline/experiments/run_006/simulation/metrics.json):** predicted height, volume, surface area, energy, pressure, and convergence measures. Use these quantities to compare parameter changes or supported real-world measurements.
-- **[geometry/extracted.step](../pcbsim_pipeline/experiments/run_006/geometry/extracted.step) and [geometry/geometry.json](../pcbsim_pipeline/experiments/run_006/geometry/geometry.json):** the selected CAD connection and its dimensions and coordinate frame. Use them to verify what was extracted and how local results map into the original assembly.
-- **[input/config.original.json](../pcbsim_pipeline/experiments/run_006/input/config.original.json) and [input/config.json](../pcbsim_pipeline/experiments/run_006/input/config.json):** the original and expanded settings saved for this run. Use them to recover the exact parameters or prepare a controlled comparison without relying on a later-edited `pipeline.json`.
-- **[fe/model.fe](../pcbsim_pipeline/experiments/run_006/fe/model.fe) and [simulation/run.cmd](../pcbsim_pipeline/experiments/run_006/simulation/run.cmd):** the solver model and command sequence. Use them to inspect or investigate the native calculation. The initial mesh beside the model is not the final solder result.
-- **[exp_report.json](../pcbsim_pipeline/experiments/run_006/exp_report.json), [simulation/runner_report.json](../pcbsim_pipeline/experiments/run_006/simulation/runner_report.json), and [simulation/stdout.log](../pcbsim_pipeline/experiments/run_006/simulation/stdout.log):** overall execution, solver identity and outcome, and detailed native output. Use them to trace completion or diagnose differences in future runs.
-- **[output/conversion_report.json](../pcbsim_pipeline/experiments/run_006/output/conversion_report.json) and [evaluation/automated_test_results.json](../pcbsim_pipeline/experiments/run_006/evaluation/automated_test_results.json):** geometric preservation, export consistency, and numerical acceptance records. Use them to review why the result was accepted; they do not demonstrate experimental accuracy.
+- **[output/pcb_with_solder.step](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/output/pcb_with_solder.step):** the original assembly with one added solder solid. Open it in CAD to inspect placement and clearance around the connection. The solder is separate, not fused into the PCB or pin.
+- **[output/solder_only.step](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/output/solder_only.step):** only the solder, including the filled barrel and top fillet, positioned in assembly coordinates. Use it for isolated shape inspection, section views, or as input geometry for a separate analysis with its own physics and material definitions.
+- **[simulation/solder_mesh.off](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/simulation/solder_mesh.off):** the final triangular solder surface in local pad coordinates. Use it to visualize the relaxed shape or compare meshes; pair it with the coordinate transform in `geometry/geometry.json` for assembly placement.
+- **[simulation/metrics.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/simulation/metrics.json):** predicted height, volume, surface area, energy, pressure, and convergence measures. Use these quantities to compare parameter changes or supported real-world measurements.
+- **[geometry/extracted.step](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/geometry/extracted.step) and [geometry/geometry.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/geometry/geometry.json):** the selected CAD connection and its dimensions and coordinate frame. Use them to verify what was extracted and how local results map into the original assembly.
+- **[input/config.original.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/input/config.original.json) and [input/config.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/input/config.json):** the original and expanded settings saved for this run. Use them to recover the exact parameters or prepare a controlled comparison without relying on a later-edited `pipeline.json`.
+- **[fe/model.fe](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/fe/model.fe) and [simulation/run.cmd](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/simulation/run.cmd):** the solver model and command sequence. Use them to inspect or investigate the native calculation. The initial mesh beside the model is not the final solder result.
+- **[exp_report.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/exp_report.json), [simulation/runner_report.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/simulation/runner_report.json), and [simulation/stdout.log](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/simulation/stdout.log):** overall execution, solver identity and outcome, and detailed native output. Use them to trace completion or diagnose differences in future runs.
+- **[output/conversion_report.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/output/conversion_report.json) and [evaluation/automated_test_results.json](../data/archive/pre-docker/pcbsim_pipeline/experiments/run_006/evaluation/automated_test_results.json):** geometric preservation, export consistency, and numerical acceptance records. Use them to review why the result was accepted; they do not demonstrate experimental accuracy.
 
 ### How to build on this experiment
 

@@ -3,7 +3,7 @@
   "inputs": {
     "step_file": "inputs/raspberry_pico_2H.step"
   },
-  "experiments_dir": "experiments",
+  "experiments_dir": "../data/experiments",
   "steps": {
     "cad_extractor": {
       "enabled": true,

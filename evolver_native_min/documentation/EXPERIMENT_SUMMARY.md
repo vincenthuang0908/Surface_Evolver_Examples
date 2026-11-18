@@ -3,7 +3,7 @@
 
 ## 1. Introduction
 
-This report summarizes the numerical results of 12 experiments conducted using Surface Evolver. The actual experiment results are in `/results/native`.
+This report summarizes the numerical results of 12 experiments conducted using Surface Evolver. The saved results are in `data/archive/pre-docker/results/native/`.
 
 The experiments investigate liquid surface behavior, surface-energy minimization, wetting conditions, capillary bridges, gravity, patterned solder pads, and solder fillet formation around PCB through-hole pins.
 

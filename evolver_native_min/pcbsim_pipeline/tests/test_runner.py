@@ -1,4 +1,3 @@
-import json
 from pathlib import Path
 import pytest
 from pcbsim.common import ComponentError, read_json, write_json

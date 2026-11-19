@@ -99,11 +99,14 @@ def test_run_ids_do_not_overwrite_or_traverse(tmp_path):
 def test_full_pipeline_and_reproduction_with_test_process_only(synthetic_step,tmp_path,fake_native_process):
     cfg=write_json(tmp_path/'pipeline.json',{
         'inputs':{'step_file':str(synthetic_step)},'experiments_dir':'experiments',
-        'steps':{'surface_evolver':{'refinements':0,'minimization_steps':1}}})
+        'steps':{'surface_evolver':{'refinements':0,'minimization_steps':1},
+                 'cad_converter':{'output_filename':'custom.stp'}}})
     first=run_pipeline(cfg)
     assert first['status']=='completed',first.get('error')
     assert all(v['status']=='success' for v in first['components'].values())
     root=Path(first['experiment_dir'])
+    assert first['components']['cad_converter']['outputs']['combined_step'] == str(Path('output/custom.stp'))
+    assert (root/'output/custom.stp').is_file()
     assert 'TEST-ONLY PROTOCOL STUB' in (root/'simulation/stdout.log').read_text()
     comparison=reproduce_experiment(root)
     assert comparison['passed'],comparison

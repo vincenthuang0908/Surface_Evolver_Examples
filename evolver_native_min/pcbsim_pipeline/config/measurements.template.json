@@ -1,5 +1,5 @@
 {
   "schema_version": 1,
-  "description": "Populate observations using your own measurements. Empty by design; no measured data was provided. See docs/CONTRACTS.md for the format.",
+  "description": "Populate observations with your measurements. See documentation/RUN_PIPELINE.md for the format.",
   "observations": {}
 }

@@ -90,6 +90,8 @@ def convert_cad(solder_mesh_path, original_step_path, geometry_path, config, out
     geometry_file = require_file(geometry_path, "geometry JSON")
     output = Path(output_path).resolve(); output.parent.mkdir(parents=True, exist_ok=True)
     report_path = output.parent / "conversion_report.json"
+    if output.name.lower() == "solder_only.step":
+        raise ComponentError("solder_only.step is reserved for the solder-only export")
     if output.exists() or output == original_path:
         raise ComponentError("Refusing to overwrite an existing STEP or the original input; choose a fresh output path")
     start = time.perf_counter()

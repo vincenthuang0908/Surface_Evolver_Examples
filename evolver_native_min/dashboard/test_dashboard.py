@@ -31,7 +31,7 @@ def isolated(tmp_path, monkeypatch):
     config = {"inputs": {"step_file": str(source)}, "steps": {
         "cad_extractor": {"selection": {"pin_index": 1}},
         "material_manager": {"material": {}, "simulation": {}}}}
-    base = app / "pipeline.docker.json"
+    base = app / "pipeline.json"
     base.write_text(json.dumps(config))
     monkeypatch.setenv("PCBSIM_APP_DIR", str(app))
     monkeypatch.setenv("PCBSIM_BASE_CONFIG", str(base))
@@ -42,6 +42,7 @@ import argparse, json, os, subprocess, sys, time
 from pathlib import Path
 p = argparse.ArgumentParser()
 p.add_argument('--config'); p.add_argument('--experiment-id')
+p.add_argument('--only', nargs='+'); p.add_argument('--stop-after')
 a = p.parse_args()
 c = json.loads(Path(a.config).read_text())
 data = Path(c['experiments_dir']).parent
@@ -59,6 +60,11 @@ outcome = os.environ.get('DASHBOARD_TEST_OUTCOME', 'success')
 if outcome == 'failure':
     (run/'exp_report.json').write_text(json.dumps({'status':'failed', 'error':'TEST ONLY failure'}))
     sys.exit(1)
+if a.only or a.stop_after:
+    (run/'exp_report.json').write_text(json.dumps({
+        'status':'completed', 'execution_scope':'selected_stages',
+        'only':a.only, 'stop_after':a.stop_after}))
+    sys.exit(0)
 (run/'simulation').mkdir()
 (run/'evaluation').mkdir()
 (run/'simulation/metrics.json').write_text(json.dumps({'numerical_pass':outcome != 'rejected'}))
@@ -181,3 +187,81 @@ def test_ui_submit_and_refresh_do_not_duplicate_run(isolated):
     assert not app.exception
     assert any("Completed" in message.value for message in app.success)
     assert len(list((data / "experiments").iterdir())) == 1
+
+
+def test_ui_advanced_config_paths_and_partial_run(isolated):
+    source, data = isolated
+    settings = source.with_name("materials.json")
+    settings.write_text('{"simulation":{"seed":17}}')
+    config = {
+        "inputs": {"step_file": "source.step"},
+        "experiments_dir": "../data/custom",
+        "steps": {"material_manager": {"config_file": "materials.json"}},
+    }
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    next(item for item in app.selectbox if item.label == "Configuration mode").set_value("Advanced JSON").run()
+    app.text_area[0].set_value(json.dumps(config))
+    next(item for item in app.text_input if item.label == "Experiment ID").set_value("materials")
+    next(item for item in app.selectbox if item.label == "Stop after").set_value("material_manager")
+    next(item for item in app.multiselect if item.label == "Run only these stages").set_value(["material_manager"])
+    next(button for button in app.button if button.label == "Run configured experiment").click().run()
+    assert not app.exception
+    assert not app.error
+    wait_until(lambda: (data / "ready").exists())
+    run = data / "custom" / "materials"
+    assert runner.active_job()["experiment_dir"] == str(run)
+    request = runner.load_json(data / ".dashboard-request.json")
+    assert request["inputs"]["step_file"] == str(source)
+    assert request["steps"]["material_manager"]["config_file"] == str(settings)
+    assert request["experiments_dir"] == str(run.parent)
+    (data / "release").touch()
+    wait_until(lambda: not runner.active_job())
+    report = runner.load_json(run / "exp_report.json")
+    assert report["only"] == ["material_manager"]
+    assert report["stop_after"] == "material_manager"
+    app.run()
+    assert any("Completed selected stages" in message.value for message in app.success)
+    assert next(item for item in app.text_input if item.label == "Experiment directory").value == str(run.parent)
+    app.toggle[0].set_value(True).run()
+    assert any(button.label == "Experiment report" for button in app.get("download_button"))
+
+
+@pytest.mark.parametrize("reported_path, filename", [
+    ("output/different.stp", "different.stp"),
+    (r"output\pcb_with_solder.step", "pcb_with_solder.step"),
+])
+def test_ui_offers_combined_step_from_run_report(isolated, reported_path, filename):
+    _, data = isolated
+    run = data / "experiments" / "custom"
+    export = run / "output" / filename
+    export.parent.mkdir(parents=True)
+    export.write_text("TEST ONLY")
+    runner.write_json(run / "exp_report.json", {
+        "status": "completed",
+        "components": {"cad_converter": {"outputs": {"combined_step": reported_path}}},
+    })
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    assert not app.exception
+    assert any(button.label == "Download PCB with solder" for button in app.get("download_button"))
+
+
+def test_tutorial_loads_run_six_and_clears_previous_stage_filters(isolated):
+    _, data = isolated
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    assert any(tab.label == "Tutorial & Documentation" for tab in app.tabs)
+    app.selectbox(key="config_mode").set_value("Advanced JSON").run()
+    app.selectbox(key="config_stop_after").set_value("material_manager")
+    app.multiselect(key="config_only").set_value(["material_manager"])
+    app.text_input(key="config_experiment_id").set_value("previous")
+    next(button for button in app.button if button.label == "Load Run 6 into Advanced JSON").click().run()
+    assert not app.exception
+    assert app.selectbox(key="config_mode").value == "Advanced JSON"
+    assert app.selectbox(key="config_stop_after").value is None
+    assert app.multiselect(key="config_only").value == []
+    assert app.text_input(key="config_experiment_id").value == ""
+    config = json.loads(app.text_area(key="config_editor").value)
+    assert config["experiments_dir"] == str(data / "experiments")
+    assert config["steps"]["cad_extractor"]["selection"]["pin_index"] == 1
+    assert config["steps"]["material_manager"]["simulation"]["fillet_volume_mm3"] == 0.025
+    assert config["steps"]["surface_evolver"]["minimization_steps"] == 1000
+    assert not runner.is_busy()

@@ -18,6 +18,11 @@ MEASURABLE = {"volume_mm3", "fillet_volume_mm3", "free_surface_area_mm2",
               "maximum_height_above_pad_mm", "pressure_Pa", "energy_J"}
 
 
+def _step_exports(root):
+    return (path for path in (root / "output").glob("*")
+            if path.is_file() and path.suffix.lower() in {".step", ".stp"})
+
+
 def compare_measurements(metrics: dict, measurements: dict) -> dict:
     observations = measurements.get("observations")
     if not isinstance(observations, dict) or not observations:
@@ -93,8 +98,7 @@ def evaluate_experiment(experiment_dir, config=None, output_dir=None, logger=Non
     if expected("cad_converter"):
         def cad_check():
             receipt = read_json(root/"output/conversion_report.json")
-            files = list((root/"output").glob("*.step"))
-            match = [p for p in files if sha256(p)==receipt.get("output_sha256")]
+            match = any(sha256(p) == receipt.get("output_sha256") for p in _step_exports(root))
             if not match or receipt.get("status") != "success":
                 raise ComponentError("Combined STEP is missing, changed, or has no successful conversion receipt")
             if not receipt.get("step_reopened") or not receipt.get("original_geometry_preserved"):
@@ -176,7 +180,7 @@ def compare_experiments(reference_dir, candidate_dir, config=None, output_path=N
         ca, cb = read_json(a/"output/conversion_report.json"), read_json(b/"output/conversion_report.json")
         def valid_step(root, receipt):
             return (receipt.get("status")=="success" and receipt.get("step_reopened")
-                and any(sha256(p)==receipt.get("output_sha256") for p in (root/"output").glob("*.step")))
+                and any(sha256(p)==receipt.get("output_sha256") for p in _step_exports(root)))
         step_pass = (valid_step(a,ca) and valid_step(b,cb) and ca.get("source_sha256")==cb.get("source_sha256")
                      and ca.get("output_solid_count")==cb.get("output_solid_count")
                      and ca.get("original_geometry_preserved") and cb.get("original_geometry_preserved")

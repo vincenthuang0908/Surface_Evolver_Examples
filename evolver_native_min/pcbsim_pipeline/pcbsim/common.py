@@ -79,14 +79,24 @@ def load_config(path: str | Path | None) -> dict:
     if path is None:
         return {}
     path = Path(path).resolve()
-    config = read_json(path)
-    for name, settings in config.get("steps", {}).items():
+    return expand_step_configs(read_json(path), path.parent)
+
+
+def expand_step_configs(config: dict, base: str | Path) -> dict:
+    steps = config.get("steps", {})
+    if not isinstance(steps, dict):
+        raise ComponentError("steps must be an object")
+    expanded = {}
+    for name, settings in steps.items():
         if not isinstance(settings, dict):
             raise ComponentError(f"steps.{name} must be an object")
         if "config_file" in settings:
-            external = resolve_path(settings["config_file"], path.parent)
-            config["steps"][name] = deep_merge(read_json(external), {k: v for k, v in settings.items() if k != "config_file"})
-    return config
+            if not isinstance(settings["config_file"], str) or not settings["config_file"].strip():
+                raise ComponentError(f"steps.{name}.config_file must be a path string")
+            external = resolve_path(settings["config_file"], base)
+            settings = deep_merge(read_json(external), {k: v for k, v in settings.items() if k != "config_file"})
+        expanded[name] = settings
+    return {**config, "steps": expanded} if "steps" in config else dict(config)
 
 
 def positive(value: Any, name: str, *, allow_zero: bool = False) -> float:

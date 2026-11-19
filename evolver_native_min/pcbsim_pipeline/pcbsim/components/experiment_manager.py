@@ -15,7 +15,6 @@ import re
 import shutil
 import time
 import traceback
-import zipfile
 from ..common import (ComponentError, cli_entry, load_config, read_json, require_file,
                       resolve_path, sha256, utc_now, write_json)
 
@@ -47,11 +46,15 @@ def environment_info() -> dict:
     return {"python": platform.python_version(), "platform": platform.platform(), "packages": versions}
 
 
+def validate_experiment_id(identifier):
+    if identifier and not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,100}", identifier):
+        raise ComponentError("Experiment ID may contain only letters, numbers, underscores and hyphens")
+
+
 def _create_run(root, identifier=None):
+    validate_experiment_id(identifier)
     root.mkdir(parents=True, exist_ok=True)
     if identifier:
-        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,100}", identifier):
-            raise ComponentError("Experiment ID may contain only letters, numbers, underscores and hyphens")
         run = root/identifier
         try: run.mkdir()
         except FileExistsError as exc: raise ComponentError(f"Experiment already exists: {identifier}") from exc
@@ -87,12 +90,7 @@ def _validate_config(config):
             raise ComponentError(f"inputs.{key} must be a path string")
 
 
-def run_pipeline(config_path, *, experiment_id=None, experiments_dir=None, stop_after=None,
-                 only=None, input_overrides=None) -> dict:
-    path = require_file(config_path, "pipeline configuration")
-    original_config = read_json(path); config = load_config(path)
-    if input_overrides:
-        config.setdefault("inputs", {}).update(input_overrides)
+def requested_stages(config, *, stop_after=None, only=None):
     _validate_config(config)
     if stop_after is not None and stop_after not in STAGES:
         raise ComponentError(f"Unknown stop_after: {stop_after}")
@@ -106,6 +104,16 @@ def run_pipeline(config_path, *, experiment_id=None, experiments_dir=None, stop_
     for key, producer in PRODUCED_BY.items():
         if key in config.get("inputs", {}) and producer in requested:
             raise ComponentError(f"inputs.{key} conflicts with enabled producer {producer}; disable it or remove the supplied artifact")
+    return requested
+
+
+def run_pipeline(config_path, *, experiment_id=None, experiments_dir=None, stop_after=None,
+                 only=None, input_overrides=None) -> dict:
+    path = require_file(config_path, "pipeline configuration")
+    original_config = read_json(path); config = load_config(path)
+    if input_overrides:
+        config.setdefault("inputs", {}).update(input_overrides)
+    requested = requested_stages(config, stop_after=stop_after, only=only)
     root = resolve_path(experiments_dir or config.get("experiments_dir", "experiments"), path.parent)
     run = _create_run(root, experiment_id)
     for folder in ("input", "geometry", "parameters", "fe", "simulation", "output", "evaluation"):

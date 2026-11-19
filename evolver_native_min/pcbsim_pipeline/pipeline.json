@@ -46,7 +46,7 @@
     },
     "surface_evolver": {
       "enabled": true,
-      "executable": "C:\\Evolver\\evolver.exe",
+      "executable": "auto",
       "timeout_seconds": 300,
       "refinements": 1,
       "minimization_steps": 1000,

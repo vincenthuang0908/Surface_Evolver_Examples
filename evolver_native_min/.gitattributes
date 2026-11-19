@@ -1,0 +1,4 @@
+# Preserve files that are checked against SHA-256 digests across checkouts.
+pcbsim_pipeline/pcbsim/_vendor/evolver_native/*.py text eol=lf
+pcbsim_pipeline/inputs/**/*.fe -text
+pcbsim_pipeline/inputs/**/*.step -text

@@ -4,7 +4,6 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image: pcbsim-pipeline:local
-    platform: linux/amd64
     init: true
     command: ["python", "-m", "streamlit", "run", "/app/dashboard/app.py", "--server.address=0.0.0.0", "--server.port=8501", "--server.headless=true", "--server.runOnSave=true", "--server.fileWatcherType=poll", "--browser.gatherUsageStats=false"]
     environment:
@@ -18,4 +17,5 @@ services:
       - ../pcbsim_pipeline/pcbsim:/app/pcbsim:ro
       - ../pcbsim_pipeline/run_pipeline.py:/app/run_pipeline.py:ro
       - ../pcbsim_pipeline/reproduce.py:/app/reproduce.py:ro
+      - ../pcbsim_pipeline/pipeline.json:/app/pipeline.json:ro
       - ../pcbsim_pipeline/tests:/app/tests:ro

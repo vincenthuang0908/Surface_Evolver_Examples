@@ -1,31 +1,34 @@
 # Setup
 
-From the repository root, with Docker Desktop running in Linux container mode:
+Use Docker with the Compose plugin and support for Linux containers. Run the
+same commands from the project root on macOS, Windows, or Linux. Compose selects
+the platform supplied by Docker.
 
-```powershell
+```sh
 docker compose -f docker/compose.yaml up -d --build
 ```
 
-Open [localhost:8501](http://localhost:8501). The image includes Python, CadQuery, and native Surface Evolver. Compose saves uploads and experiments in `data/` on the host.
+Open [localhost:8501](http://localhost:8501). The image includes Python, CadQuery,
+and headless Surface Evolver.
 
-If a clean build fails because this PC's HTTPS inspection certificate is missing from the container, use the archived public CA as a Docker build secret:
+## Files and configuration
 
-```powershell
-docker build -f docker/Dockerfile --secret id=build_ca,src=data/archive/docker-validation/build-ca.pem -t pcbsim-pipeline:local .
-docker compose -f docker/compose.yaml up -d --no-build
+- The project's `data/` directory maps to `/data` inside the container. Use
+  this directory for uploads, custom configuration files, and results you want
+  to keep on the host.
+- The dashboard and CLI use the same baseline, `pcbsim_pipeline/pipeline.json`,
+  mounted at `/app/pipeline.json`. Relative JSON paths resolve against the
+  directory containing that configuration. Surface Evolver is selected
+  automatically from the container environment.
+- To use a custom config stored in `data/`, refer to it as
+  `/data/your_config.json` and use container paths for its inputs. The supplied
+  Pico STEP is at `/app/inputs/raspberry_pico_2H.step`.
+
+## Command-line use
+
+```sh
+docker compose -f docker/compose.yaml run --rm pipeline python run_pipeline.py --config /app/pipeline.json
+docker compose -f docker/compose.yaml run --rm pipeline python run_pipeline.py --config /data/your_config.json
+docker compose -f docker/compose.yaml run --rm pipeline python -m pytest dashboard tests
+docker compose -f docker/compose.yaml down
 ```
-
-To run the pipeline directly on Windows, install Python 3.12 and Surface Evolver, then run from the repository root:
-
-```powershell
-py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e './pcbsim_pipeline[cad,test]'
-```
-
-Set `steps.surface_evolver.executable` in `pcbsim_pipeline/pipeline.json` to the installed Windows executable path. Relative paths in that file resolve from its directory.
-
-```powershell
-.\.venv\Scripts\python.exe pcbsim_pipeline/run_pipeline.py --config pcbsim_pipeline/pipeline.json
-```
-
-See [RUN_PIPELINE.md](RUN_PIPELINE.md) for inputs, expected outputs, and validation. The original standalone experiments and their Windows support files are preserved under `data/archive/pre-docker/`.

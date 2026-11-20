@@ -30,3 +30,50 @@ def load_shape(path):
     if not shape.Solids():
         raise ComponentError(f"STEP file contains no solids: {path}")
     return shape
+
+
+class CadQueryBackend:
+    """Geometry operations used by the shared connection extractor."""
+
+    load = staticmethod(load_shape)
+    bounds = staticmethod(bounds)
+    signature = staticmethod(solid_signature)
+
+    def solids(self, shape):
+        return shape.Solids()
+
+    def volume(self, shape):
+        return shape.Volume()
+
+    def cylindrical_faces(self, shape):
+        from OCP.BRepAdaptor import BRepAdaptor_Surface
+
+        for face in shape.Faces():
+            if face.geomType() == "CYLINDER":
+                cylinder = BRepAdaptor_Surface(face.wrapped).Cylinder()
+                axis = cylinder.Axis().Direction()
+                center = cylinder.Location()
+                yield axis.Z(), (center.X(), center.Y()), cylinder.Radius(), bounds(face)
+
+    def planar_faces(self, shape):
+        for face in shape.Faces():
+            if face.geomType() == "PLANE":
+                yield face.normalAt().toTuple(), bounds(face)
+
+    def box(self, size, origin):
+        cq = cq_module()
+        return cq.Solid.makeBox(*size, cq.Vector(*origin))
+
+    def cylinder(self, radius, height, origin):
+        cq = cq_module()
+        return cq.Solid.makeCylinder(radius, height, cq.Vector(*origin))
+
+    def intersect(self, first, second):
+        return first.intersect(second)
+
+    def valid(self, shape):
+        return shape.isValid()
+
+    def export_step(self, solids, path):
+        cq = cq_module()
+        cq.exporters.export(cq.Compound.makeCompound(solids), str(path))

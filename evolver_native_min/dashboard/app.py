@@ -1,5 +1,6 @@
 """Browser interface for the PCB experiment pipeline."""
 from datetime import datetime, timezone
+from importlib import import_module
 import json
 from pathlib import Path
 
@@ -8,6 +9,7 @@ import streamlit as st
 import job_runner as runner
 from pcbsim.common import resolve_path
 from tutorial import show_tutorial
+from view_3d_results import show_results_viewer
 
 st.set_page_config(page_title="PCB solder experiments", page_icon="🔬", layout="centered")
 runner.register_shutdown()
@@ -230,7 +232,6 @@ def configured_run(busy: bool) -> None:
 
 
 st.title("PCB solder experiments")
-st.caption("Run one through-hole solder experiment and download its CAD results.")
 
 
 @st.fragment(run_every="2s")
@@ -240,7 +241,9 @@ def dashboard() -> None:
         st.session_state["current_run"] = active["experiment_dir"]
     shown_run = st.session_state.get("current_run")
     busy = runner.is_busy()
-    new_tab, history_tab, tutorial_tab = st.tabs(["Run experiment", "Experiments", "Tutorial & Documentation"])
+    new_tab, history_tab, tutorial_tab = st.tabs(
+        ["Run experiment", "Results", "Tutorial & Documentation"], key="experiment_tab", on_change="rerun"
+    )
     with new_tab:
         if busy:
             st.info("An experiment is active. New submissions are available after it finishes.")
@@ -262,10 +265,11 @@ def dashboard() -> None:
                       key=lambda p: p.stat().st_mtime, reverse=True) if root.exists() else []
         if runs:
             choice = st.selectbox("Experiment", runs, format_func=lambda run: run.name, key="history_choice")
-            # Separate keys when the same active result appears in both tabs.
-            if shown_run and Path(shown_run) == choice:
-                st.info("This experiment's results are shown in Run experiment.")
-            else:
+            if history_tab.open:
+                report = runner.load_json(choice / "exp_report.json")
+                show_results_viewer(choice, combined_step(choice, report), report)
+            # The current run's status and downloads already appear in Run experiment.
+            if not shown_run or Path(shown_run).resolve() != choice:
                 show_experiment(choice, active)
         else:
             st.caption("No saved experiments yet.")
@@ -274,4 +278,11 @@ def dashboard() -> None:
         show_tutorial()
 
 
-dashboard()
+workspace = st.segmented_control("Workspace", ["Experiments", "CAD Debug"], default="Experiments",
+                                 selection_mode="single")
+if workspace == "CAD Debug":
+    st.set_page_config(layout="wide")
+    import_module("3d_visualize_cad.cad_workspace").show_cad_workspace()
+else:
+    st.caption("Run one through-hole solder experiment and download its CAD results.")
+    dashboard()

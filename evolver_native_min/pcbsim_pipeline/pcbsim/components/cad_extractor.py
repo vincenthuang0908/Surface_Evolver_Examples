@@ -5,27 +5,20 @@ The hole is preserved as a void, never invented as a solid.
 """
 from __future__ import annotations
 import argparse
-import math
 from pathlib import Path
 import numpy as np
-from ..cad import bounds, cq_module, load_shape, solid_signature
+from ..cad import CadQueryBackend
 from ..common import (ComponentError, cli_entry, config_arg, integer, load_config,
                       logger_or_default, positive, require_file, result, section, sha256, write_json)
 
 
-def vertical_cylinders(shape) -> list[dict]:
-    from OCP.BRepAdaptor import BRepAdaptor_Surface
+def vertical_cylinders(shape, backend=None) -> list[dict]:
+    backend = backend or CadQueryBackend()
     cylinders = []
-    for face in shape.Faces():
-        if face.geomType() != "CYLINDER":
+    for axis_z, center, radius, box in backend.cylindrical_faces(shape):
+        if abs(abs(axis_z) - 1) > 1e-7:
             continue
-        cylinder = BRepAdaptor_Surface(face.wrapped).Cylinder()
-        direction = cylinder.Axis().Direction()
-        if abs(abs(direction.Z()) - 1) > 1e-7:
-            continue
-        location = cylinder.Location()
-        cylinders.append({"center_xy_mm": [location.X(), location.Y()],
-                          "radius_mm": cylinder.Radius(), "bounds_mm": bounds(face)})
+        cylinders.append({"center_xy_mm": list(center), "radius_mm": radius, "bounds_mm": box})
     return cylinders
 
 
@@ -33,8 +26,10 @@ def _center_xy(bb):
     return np.array([(bb[0] + bb[3]) / 2, (bb[1] + bb[4]) / 2])
 
 
-def detect_connections(shape, settings: dict) -> tuple[int, list[dict]]:
-    solids = shape.Solids(); boxes = [bounds(s) for s in solids]
+def detect_connections(shape, settings: dict, *, backend=None) -> tuple[int, list[dict]]:
+    backend = backend or CadQueryBackend()
+    solids = backend.solids(shape)
+    boxes = [backend.bounds(solid) for solid in solids]
     if "board_solid_index" in settings:
         board_index = integer(settings["board_solid_index"], "board_solid_index", 0, len(solids)-1)
     else:
@@ -42,10 +37,10 @@ def detect_connections(shape, settings: dict) -> tuple[int, list[dict]]:
                   if b[3]-b[0] > 5 and b[4]-b[1] > 5 and 0.1 < b[5]-b[2] < min(b[3]-b[0], b[4]-b[1])/5]
         if not boards:
             raise ComponentError("No horizontal PCB slab found; v1 requires the PCB in the XY plane. Set board_solid_index for ambiguous assemblies.")
-        board_index = max(boards, key=lambda i: solids[i].Volume())
+        board_index = max(boards, key=lambda i: backend.volume(solids[i]))
     board_bb = boxes[board_index]
     holes = {}
-    for cylinder in vertical_cylinders(solids[board_index]):
+    for cylinder in vertical_cylinders(solids[board_index], backend):
         center = cylinder["center_xy_mm"]; radius = cylinder["radius_mm"]; bb = cylinder["bounds_mm"]
         if bb[2] <= board_bb[2] + 1e-5 and bb[5] >= board_bb[5] - 1e-5:
             holes[(round(center[0], 7), round(center[1], 7), round(radius, 7))] = cylinder
@@ -78,17 +73,14 @@ def detect_connections(shape, settings: dict) -> tuple[int, list[dict]]:
         # Four long axis-aligned planar walls must exist; chamfered ends are allowed.
         side_faces = []
         normals = set()
-        for face in pin.Faces():
-            if face.geomType() != "PLANE":
-                continue
-            n = face.normalAt().toTuple()
+        for n, face_bounds in backend.planar_faces(pin):
             if abs(n[2]) < 1e-7 and (abs(abs(n[0])-1) < 1e-7 or abs(abs(n[1])-1) < 1e-7):
-                side_faces.append(bounds(face)); normals.add(tuple(round(x) for x in n))
+                side_faces.append(face_bounds); normals.add(tuple(round(x) for x in n))
         if len(normals) != 4:
             raise ComponentError(f"Pin solid {pin_i} is not an axis-aligned rectangular pin; no circular approximation is made")
         straight_low = max(b[2] for b in side_faces)
         straight_high = min(b[5] for b in side_faces)
-        cylindrical_pad = [c for c in vertical_cylinders(pad)
+        cylindrical_pad = [c for c in vertical_cylinders(pad, backend)
                            if np.linalg.norm(np.array(c["center_xy_mm"])-center) < tolerance]
         if not cylindrical_pad:
             raise ComponentError(f"Pad solid {pad_i} has no concentric cylindrical boundary")
@@ -121,14 +113,16 @@ def detect_connections(shape, settings: dict) -> tuple[int, list[dict]]:
     return board_index, connections
 
 
-def extract_cad(input_step, config, output_dir, logger=None, *, list_only=False) -> dict:
+def extract_cad(input_step, config, output_dir, logger=None, *, list_only=False, backend=None) -> dict:
     log = logger_or_default(logger, "cad_extractor")
     settings = section(config, "cad_extractor")
     source = require_file(input_step, "original STEP")
     out = Path(output_dir).resolve(); out.mkdir(parents=True, exist_ok=True)
     log.info("Loading STEP and detecting connections: %s", source)
-    shape = load_shape(source); solids = shape.Solids()
-    board_i, connections = detect_connections(shape, settings)
+    backend = backend or CadQueryBackend()
+    shape = backend.load(source)
+    solids = backend.solids(shape)
+    board_i, connections = detect_connections(shape, settings, backend=backend)
     source_hash = sha256(source)
     catalog_path = write_json(out / "connections.json", {
         "schema_version": 1, "source_sha256": source_hash, "units": "mm",
@@ -150,23 +144,22 @@ def extract_cad(input_step, config, output_dir, logger=None, *, list_only=False)
     size = positive(settings.get("pcb_section_size_mm", 3.0), "pcb_section_size_mm")
     if size <= selected["pad_radius_mm"]*2:
         raise ComponentError("pcb_section_size_mm must exceed the pad diameter")
-    cq = cq_module(); bb = bounds(solids[board_i])
-    crop = cq.Solid.makeBox(size, size, bb[5]-bb[2]+0.2,
-                            cq.Vector(cx-size/2, cy-size/2, bb[2]-0.1))
-    pcb_section = solids[board_i].intersect(crop)
-    if not pcb_section.Solids() or not pcb_section.isValid():
+    bb = backend.bounds(solids[board_i])
+    crop = backend.box((size, size, bb[5]-bb[2]+0.2), (cx-size/2, cy-size/2, bb[2]-0.1))
+    pcb_section = backend.intersect(solids[board_i], crop)
+    board_sections = backend.solids(pcb_section)
+    if not board_sections or not backend.valid(pcb_section):
         raise ComponentError("PCB crop is empty or invalid")
     # Verify that clipping did not accidentally seal the source hole.
-    probe = cq.Solid.makeCylinder(selected["pcb_drill_radius_mm"]*0.99,
-                                  bb[5]-bb[2], cq.Vector(cx, cy, bb[2]))
-    void_overlap = pcb_section.intersect(probe).Volume()
+    probe = backend.cylinder(selected["pcb_drill_radius_mm"]*0.99, bb[5]-bb[2], (cx, cy, bb[2]))
+    void_overlap = backend.volume(backend.intersect(pcb_section, probe))
     if abs(void_overlap) > 1e-7:
         raise ComponentError("Extracted PCB section no longer preserves its through-hole")
-    extracted = cq.Compound.makeCompound([pcb_section, solids[selected["pad_solid_index"]], solids[selected["pin_solid_index"]]])
+    pad, pin = solids[selected["pad_solid_index"]], solids[selected["pin_solid_index"]]
     extracted_path = out / "extracted.step"
-    cq.exporters.export(extracted, str(extracted_path))
-    reopened = load_shape(extracted_path)
-    if len(reopened.Solids()) != len(extracted.Solids()):
+    backend.export_step([pcb_section, pad, pin], extracted_path)
+    reopened = backend.load(extracted_path)
+    if len(backend.solids(reopened)) != len(board_sections) + 2:
         raise ComponentError("Extracted STEP round-trip changed the solid count")
     max_height = selected["pin_straight_z_range_mm"][1] - z0
     if max_height <= 0:
@@ -185,10 +178,11 @@ def extract_cad(input_step, config, output_dir, logger=None, *, list_only=False)
             "depth_mm": selected["pin_depth_mm"], "center_xy_mm": (np.array(selected["pin_center_xy_mm"])-[cx,cy]).tolist(),
             "max_straight_height_mm": max_height,
             "provenance": "Bounding box and four planar sidewalls; beveled tip excluded from allowable wetting height"},
-        "pcb": {"thickness_mm": bb[5]-bb[2], "section_size_mm": size},
+        "pcb": {"thickness_mm": bb[5]-bb[2], "section_size_mm": size,
+                "world_z_range_mm": [bb[2], bb[5]], "section_bounds_mm": backend.bounds(pcb_section),
+                "section_volume_mm3": backend.volume(pcb_section)},
         "validation": {"hole_preserved": True, "void_overlap_mm3": float(void_overlap), "step_reopened": True},
-        "original_selected_solids": {"pin": solid_signature(solids[selected["pin_solid_index"]]),
-                                     "pad": solid_signature(solids[selected["pad_solid_index"]])}}
+        "original_selected_solids": {"pin": backend.signature(pin), "pad": backend.signature(pad)}}
     geometry_path = write_json(out / "geometry.json", geometry)
     report = result("cad_extractor", {"extracted_step": extracted_path, "geometry": geometry_path, "connections": catalog_path},
                     connection_count=len(connections), selected_pin_index=index)

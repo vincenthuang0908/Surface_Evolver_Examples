@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PCB CAD viewer</title>
+  <link rel="stylesheet" href="./viewer.css">
+  <script type="importmap">{"imports":{"three":"./three/build/three.module.js"}}</script>
+</head>
+<body>
+  <section class="toolbar" aria-label="Viewer controls">
+    <div class="connection"><label for="pin">Connection</label> <select id="pin"></select></div>
+    <button id="assembly" type="button">Fit assembly</button>
+    <button id="focus" type="button">Focus pin</button>
+    <label><input id="labels" type="checkbox" checked> Pin labels</label>
+    <label><input id="context" type="checkbox" checked> Other solids</label>
+    <label><input id="bounds" type="checkbox" checked> Pin bounding box</label>
+  </section>
+  <div class="legend" aria-label="Part colors">
+    <span class="pcb">PCB</span><span class="pad">Pad</span><span class="pin">Pin</span>
+    <span class="selected">Selected pin</span><span class="other">Other</span>
+  </div>
+  <div id="views">
+    <section class="pane" id="original" aria-label="Original STEP view"><strong>Original STEP</strong></section>
+    <section class="pane" id="extracted" aria-label="Extracted STEP view" hidden><strong>Extracted STEP</strong></section>
+  </div>
+  <p id="status" role="status">Loading Three.js viewer…</p>
+  <script type="module" src="./viewer.js"></script>
+</body>
+</html>

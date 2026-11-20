@@ -7,6 +7,7 @@ const status = byId('status');
 const colors = {pcb: 0x32a482, pad: 0xe89b53, pin: 0xedcd72, other: 0x8298af, solder: 0x4b7391, selected: 0x6ddaff};
 const views = [];
 let original, comparison, assembly, comparedPin, activePin, inspectedSolid, solderSolidIndex;
+let comparedSolder = false;
 let synchronizing = false;
 
 function send(type, fields = {}) {
@@ -143,7 +144,7 @@ function updateAppearance() {
     view.box.visible = false;
     for (const mesh of view.meshes) {
       const {role, index, pin_indices: pins, bounds_mm: bounds} = mesh.userData;
-      const solder = view === original && index === solderSolidIndex;
+      const solder = (view === original || comparedSolder) && index === solderSolidIndex;
       const inspected = view === original && index === inspectedSolid;
       const selected = solder ? inspected : role === 'pin' && pins.includes(activePin);
       mesh.visible = solder || role !== 'other' || byId('context').checked;
@@ -155,7 +156,7 @@ function updateAppearance() {
       }
     }
   }
-  const comparing = comparedPin != null && comparedPin === activePin;
+  const comparing = comparedSolder || (comparedPin != null && comparedPin === activePin);
   comparison.container.hidden = !comparing;
   byId('views').classList.toggle('comparing', comparing);
   byId('focus').disabled = activePin == null;
@@ -165,7 +166,7 @@ function updateAppearance() {
   status.textContent = assembly.detection_error || (comparing
     ? 'Both views share the same world coordinates. Drag either view to rotate them together.'
     : 'Drag to rotate, scroll to zoom, and right-drag to pan. Click a pin, label, or solid to inspect it.');
-  if (solderSolidIndex != null) {
+  if (solderSolidIndex != null && !comparedSolder) {
     status.textContent = 'Drag to rotate, scroll to zoom, and right-drag to pan. Click the blue-gray solder joint to select it.';
   }
   draw();
@@ -241,16 +242,22 @@ function render({original: data, extracted, selection, solder_solid_index: solde
   activePin = selection.pin_index;
   inspectedSolid = selection.solid_index;
   solderSolidIndex = solderIndex;
-  const nextPin = extracted?.pin_index;
-  const nextComparison = nextPin !== comparedPin;
+  const nextSolder = extracted?.kind === 'solder';
+  const nextPin = nextSolder ? undefined : extracted?.pin_index;
+  const nextComparison = nextSolder !== comparedSolder || nextPin !== comparedPin || (newAssembly && nextSolder);
   if (nextComparison) {
+    comparedSolder = nextSolder;
     comparedPin = nextPin;
     comparedBounds = extracted?.bounds_mm;
     loadMeshes(comparison, extracted?.solids ?? [], false);
+    comparison.container.querySelector('strong').textContent = nextSolder ? 'Solder joint only' : 'Extracted STEP';
+    comparison.container.setAttribute('aria-label', nextSolder ? 'Solder joint only' : 'Extracted STEP view');
   }
   updateAppearance();
-  if (extracted && nextComparison) focusPin();
-  else if (newAssembly) fit(boxFrom(assembly.bounds_mm));
+  if (extracted && nextComparison) {
+    if (nextSolder) focusSolderJoint();
+    else focusPin();
+  } else if (newAssembly) fit(boxFrom(assembly.bounds_mm));
 }
 
 pinSelect.addEventListener('change', () => {

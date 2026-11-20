@@ -213,6 +213,9 @@ def show_part_details(scene: dict, selected: dict) -> None:
 
 def show_results_viewer(run: Path, step: Path | None, report: dict) -> None:
     st.subheader("3D PCB result")
+    comparison_key = "pcb_results_solder_comparison"
+    if st.session_state.get(comparison_key, (None, None))[0] != run:
+        st.session_state[comparison_key] = (run, None)
     conversion = report.get("components", {}).get("cad_converter", {})
     if step is None:
         st.info("A combined PCB and solder STEP export is unavailable for this experiment.")
@@ -251,7 +254,16 @@ def show_results_viewer(run: Path, step: Path | None, report: dict) -> None:
     first = next(iter(scene["connections"]), {})
     default = {"pin_index": first.get("pin_index"), "solid_index": first.get("pin_solid_index")}
     joint = scene["joint_index"]
-    selected = viewer(original={**scene, "source_sha256": source[1]},
+    extracted = None
+    if joint is not None:
+        comparing = st.session_state[comparison_key][1] == scene_id
+        st.button("Hide solder joint comparison" if comparing else "Extract solder joint",
+                  key=f"{key}_extract_solder", on_click=st.session_state.__setitem__,
+                  args=(comparison_key, (run, None if comparing else scene_id)))
+        if comparing:
+            solid = next(part for part in scene["solids"] if part["index"] == joint)
+            extracted = {"kind": "solder", "bounds_mm": solid["bounds_mm"], "solids": [solid]}
+    selected = viewer(original={**scene, "source_sha256": source[1]}, extracted=extracted,
                       solder_solid_index=joint, selection=st.session_state.get(key) or default,
                       key=key, default=default)
     if scene["detection_error"]:
@@ -262,7 +274,7 @@ def show_results_viewer(run: Path, step: Path | None, report: dict) -> None:
     elif selected.get("solid_index") == joint:
         show_joint_metrics(run, conversion, source[1])
     else:
-        st.caption("Select the orange solder joint to see its simulation results.")
+        st.caption("Select the blue-gray solder joint to see its simulation results.")
     if joint is None or selected.get("solid_index") != joint:
         show_part_details(scene, selected)
 

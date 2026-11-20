@@ -12,6 +12,10 @@ Open [localhost:8501](http://localhost:8501). The image includes Python, CadQuer
 headless FreeCAD, and headless Surface Evolver. Rebuild the image to install the
 FreeCAD worker and the browser's Three.js assets.
 
+From **Experiments**, open **Tutorial & Documentation** to load and run the
+supplied Pico example. The [run guide](RUN_PIPELINE.md#run-the-supplied-pico-sample)
+walks through configuration, result downloads, and a practice measurement comparison.
+
 ## CAD debug workspace
 
 The viewer, FreeCAD worker, and integration test live in

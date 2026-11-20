@@ -1,13 +1,16 @@
 """Browser interface for the PCB experiment pipeline."""
+import csv
 from datetime import datetime, timezone
 from importlib import import_module
+import io
 import json
 from pathlib import Path
 
 import streamlit as st
 
 import job_runner as runner
-from pcbsim.common import resolve_path
+from configuration import guided_configuration, load_advanced_draft, load_guided
+from measurement_workflow import show_measurement_workflow
 from tutorial import show_tutorial
 from view_3d_results import show_results_viewer
 
@@ -82,7 +85,24 @@ def show_experiment(run: Path, active: dict) -> None:
         for key, label in STAGES.items()
     ], hide_index=True, width="stretch")
 
-    if metrics:
+    outputs = runner.load_json(run / "simulation/selected_outputs.json")
+    if outputs:
+        rows = outputs["outputs"]
+        if rows:
+            st.dataframe([
+                {"Output": row["label"], "Value": row["value"], "Unit": row["unit"], "Type": row["category"]}
+                for row in rows
+            ], hide_index=True, width="stretch")
+            if any(row["value"] is None for row in rows):
+                st.caption("Blank values are unavailable for this model or mesh.")
+            csv_buffer = io.StringIO()
+            writer = csv.DictWriter(csv_buffer, fieldnames=["metric", "label", "value", "unit", "category"])
+            writer.writeheader()
+            writer.writerows(rows)
+            st.download_button("Download selected outputs (CSV)", csv_buffer.getvalue(),
+                               f"{run.name}_outputs.csv", "text/csv", key=f"outputs_csv_{run}", on_click="ignore")
+        download_artifact(run, "Download selected outputs (JSON)", run / "simulation/selected_outputs.json", "application/json")
+    elif metrics:
         columns = st.columns(3)
         for column, label, key, unit in (
             (columns[0], "Height above pad", "maximum_height_above_pad_mm", "mm"),
@@ -143,34 +163,9 @@ def show_submitted_run(record: dict) -> None:
     st.rerun()
 
 
-def quick_run(busy: bool) -> None:
-    source = st.radio("PCB source", ["Supplied Pico example", "Upload STEP"], horizontal=True, key="source")
-    upload = None
-    if source == "Upload STEP":
-        upload = st.file_uploader("PCB assembly", type=["step", "stp"], key="upload")
-    with st.form("experiment"):
-        pin = st.number_input("Connection index", min_value=1, value=1, step=1,
-                              help="Geometric catalog index. The Pico example has 40 connections.")
-        volume = st.number_input("Top-fillet solder volume (mm³)", min_value=0.000001,
-                                 value=0.025, step=0.005, format="%.6f")
-        angle = st.number_input("Pin contact angle (degrees)", min_value=0.1, max_value=179.9,
-                                value=80.0, step=1.0)
-        submitted = st.form_submit_button("Run experiment", disabled=busy, type="primary")
-    with st.expander("Model assumptions"):
-        st.write("One top-side fillet, full barrel, mobile pin contact line, fixed pad perimeter, and zero gravity. "
-                 "Material values are illustrative.")
-        st.write("STEP geometry must have a horizontal PCB, vertical circular plated holes, and aligned rectangular pins.")
-    if submitted:
-        try:
-            if source == "Upload STEP":
-                if upload is None:
-                    raise ValueError("Upload a STEP assembly first.")
-                step = runner.save_upload(upload.getvalue())
-            else:
-                step = resolve_path(runner.base_config()["inputs"]["step_file"], runner.base_config_path().parent)
-            show_submitted_run(runner.start_experiment(step, int(pin), float(volume), float(angle)))
-        except (ValueError, RuntimeError, OSError) as exc:
-            st.error(str(exc))
+def queue_guided_editor(config, base) -> None:
+    st.session_state["pending_guided_config"] = (config, base)
+    st.rerun()
 
 
 def load_editor_config() -> None:
@@ -237,21 +232,40 @@ st.title("PCB solder experiments")
 @st.fragment(run_every="2s")
 def dashboard() -> None:
     active = runner.active_job()
-    if active:
+    if active and active.get("kind") != "calibration":
         st.session_state["current_run"] = active["experiment_dir"]
     shown_run = st.session_state.get("current_run")
     busy = runner.is_busy()
-    new_tab, history_tab, tutorial_tab = st.tabs(
-        ["Run experiment", "Results", "Tutorial & Documentation"], key="experiment_tab", on_change="rerun"
+    if shown_run and not busy and not Path(shown_run).is_dir():
+        st.session_state.pop("current_run", None)
+        shown_run = None
+    editor_error = None
+    if pending := st.session_state.pop("pending_advanced_config", None):
+        load_advanced_draft(json.dumps(pending, indent=2), runner.base_config_path().parent)
+    if pending := st.session_state.pop("pending_guided_config", None):
+        try:
+            load_guided(*pending)
+            st.session_state["config_mode"] = "Guided setup"
+            st.session_state["experiment_tab"] = "Inputs & Configuration"
+        except (ValueError, RuntimeError, OSError) as exc:
+            editor_error = str(exc)
+    new_tab, history_tab, evaluate_tab, tutorial_tab = st.tabs(
+        ["Inputs & Configuration", "Results", "Evaluation & Calibration", "Tutorial & Documentation"],
+        key="experiment_tab", on_change="rerun"
     )
     with new_tab:
+        if editor_error:
+            st.error(editor_error)
         if busy:
-            st.info("An experiment is active. New submissions are available after it finishes.")
-        mode = st.selectbox("Configuration mode", ["Quick setup", "Advanced JSON"], key="config_mode")
+            st.info("An experiment or calibration is active. New submissions are available after it finishes.")
+        mode = st.selectbox("Configuration mode", ["Guided setup", "Advanced JSON"], key="config_mode")
         if mode == "Advanced JSON":
             configured_run(busy)
         else:
-            quick_run(busy)
+            try:
+                guided_configuration(busy, show_submitted_run)
+            except (ValueError, RuntimeError, OSError) as exc:
+                st.error(str(exc))
         if shown_run:
             st.subheader(Path(shown_run).name)
             show_experiment(Path(shown_run), active)
@@ -262,7 +276,8 @@ def dashboard() -> None:
             st.session_state["history_root"] = str(last_run)
         root = Path(st.text_input("Experiment directory", key="history_root")).expanduser().resolve()
         runs = sorted((p for p in root.iterdir() if p.is_dir() and (p / "exp_report.json").is_file()),
-                      key=lambda p: p.stat().st_mtime, reverse=True) if root.exists() else []
+                      key=lambda p: runner.load_json(p / "exp_report.json").get("start_time") or "",
+                      reverse=True) if root.is_dir() else []
         if runs:
             choice = st.selectbox("Experiment", runs, format_func=lambda run: run.name, key="history_choice")
             if history_tab.open:
@@ -274,6 +289,9 @@ def dashboard() -> None:
         else:
             st.caption("No saved experiments yet.")
 
+    with evaluate_tab:
+        show_measurement_workflow(runs, busy, active, queue_guided_editor)
+
     with tutorial_tab:
         show_tutorial()
 
@@ -284,5 +302,4 @@ if workspace == "CAD Debug":
     st.set_page_config(layout="wide")
     import_module("3d_visualize_cad.cad_workspace").show_cad_workspace()
 else:
-    st.caption("Run one through-hole solder experiment and download its CAD results.")
     dashboard()

@@ -51,6 +51,17 @@ def validate_experiment_id(identifier):
         raise ComponentError("Experiment ID may contain only letters, numbers, underscores and hyphens")
 
 
+def next_run_id(root):
+    """Continue after the highest numbered run, including legacy run_001 names."""
+    highest = 0
+    if root.is_dir():
+        for path in root.iterdir():
+            match = re.fullmatch(r"run_?([0-9]{3,})", path.name, flags=re.IGNORECASE)
+            if match:
+                highest = max(highest, int(match[1]))
+    return f"run{highest + 1:03d}"
+
+
 def _create_run(root, identifier=None):
     validate_experiment_id(identifier)
     root.mkdir(parents=True, exist_ok=True)
@@ -59,11 +70,10 @@ def _create_run(root, identifier=None):
         try: run.mkdir()
         except FileExistsError as exc: raise ComponentError(f"Experiment already exists: {identifier}") from exc
         return run
-    for i in range(1,1000000):
-        run = root/f"run_{i:03d}"
+    while True:
+        run = root / next_run_id(root)
         try: run.mkdir(); return run
         except FileExistsError: continue
-    raise ComponentError("No experiment IDs available")
 
 
 def _save_report(run, report):

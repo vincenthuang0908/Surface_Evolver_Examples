@@ -89,9 +89,11 @@ def test_manager_unknown_stage_rejected(tmp_path):
 
 
 def test_run_ids_do_not_overwrite_or_traverse(tmp_path):
-    assert _create_run(tmp_path).name=='run_001'
-    assert _create_run(tmp_path).name=='run_002'
-    with pytest.raises(ComponentError):_create_run(tmp_path,'run_001')
+    assert _create_run(tmp_path).name=='run001'
+    assert _create_run(tmp_path).name=='run002'
+    (tmp_path / "run_006").mkdir()
+    assert _create_run(tmp_path).name == "run007"
+    with pytest.raises(ComponentError):_create_run(tmp_path,'run001')
     with pytest.raises(ComponentError):_create_run(tmp_path,'../escape')
 
 @pytest.mark.cad

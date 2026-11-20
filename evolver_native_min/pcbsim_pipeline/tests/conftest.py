@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import subprocess
 import sys
+from types import SimpleNamespace
 import numpy as np
 import pytest
 from pcbsim.common import write_json, read_json
@@ -91,6 +92,7 @@ def fake_native_process(monkeypatch):
             return None,None
         def wait(self): return self.returncode
     monkeypatch.setattr(runner,'find_executable',lambda requested=None:sys.executable)
-    monkeypatch.setattr(runner.subprocess,'Popen',StubProcess)
+    monkeypatch.setattr(runner, 'subprocess', SimpleNamespace(
+        Popen=StubProcess, PIPE=subprocess.PIPE, STDOUT=subprocess.STDOUT, TimeoutExpired=subprocess.TimeoutExpired))
     monkeypatch.setattr(runner,'_stop_process',lambda process:state.update(stopped=True))
     return state

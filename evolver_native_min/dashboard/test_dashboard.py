@@ -177,6 +177,7 @@ def test_ui_submit_and_refresh_do_not_duplicate_run(isolated):
     assert not app.exception
     wait_until(lambda: (data / "ready").exists())
     first = runner.active_job()["id"]
+    assert first == "run001"
     app.run()
     assert not app.exception
     assert runner.active_job()["id"] == first
@@ -187,6 +188,10 @@ def test_ui_submit_and_refresh_do_not_duplicate_run(isolated):
     assert not app.exception
     assert any("Completed" in message.value for message in app.success)
     assert len(list((data / "experiments").iterdir())) == 1
+    (data / "experiments" / "run004").mkdir()
+    next(button for button in app.button if button.label == "Run experiment").click().run()
+    next_report = data / "experiments" / "run005" / "exp_report.json"
+    wait_until(lambda: runner.load_json(next_report).get("status") == "completed")
 
 
 def test_ui_advanced_config_paths_and_partial_run(isolated):
@@ -265,3 +270,158 @@ def test_tutorial_loads_run_six_and_clears_previous_stage_filters(isolated):
     assert config["steps"]["material_manager"]["simulation"]["fillet_volume_mm3"] == 0.025
     assert config["steps"]["surface_evolver"]["minimization_steps"] == 1000
     assert not runner.is_busy()
+
+
+def test_tutorial_loads_pico_sample_and_submits_from_guided_setup(isolated):
+    source, data = isolated
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    app.selectbox(key="config_mode").set_value("Advanced JSON").run()
+    next(button for button in app.button if button.label == "Load Pico sample into Guided setup").click().run()
+    assert not app.exception and not app.error
+    assert app.selectbox(key="config_mode").value == "Guided setup"
+    assert app.session_state["experiment_tab"] == "Inputs & Configuration"
+    assert app.radio(key="source_1").value == "Supplied Pico example"
+    assert app.number_input(key="fillet_volume_mm3_1").value == .025
+    assert not runner.is_busy()
+    next(button for button in app.button if button.label == "Run experiment").click().run()
+    wait_until(lambda: (data / "ready").exists())
+    config = runner.read_json(data / ".dashboard-request.json")
+    assert config["inputs"]["step_file"] == str(source)
+    assert config["steps"]["cad_extractor"]["selection"]["pin_index"] == 1
+    assert "pin_apparent_contact_angle_deg" in config["steps"]["surface_evolver"]["outputs"]
+    assert config["steps"]["cad_converter"]["enabled"]
+    (data / "release").touch()
+    wait_until(lambda: not runner.active_job())
+
+
+def test_tutorial_offers_valid_material_preset(isolated):
+    from pcbsim.components.material_manager import MATERIAL_PROPERTIES, normalize_materials
+
+    example = runner.read_json(Path(__file__).with_name("example_material.json"))
+    assert example["schema_version"] == 1
+    assert MATERIAL_PROPERTIES.keys() <= example["material"].keys()
+    material = normalize_materials({"material": example["material"]})["material"]
+    assert material["name"] == "Pico tutorial solder"
+    assert all(entry["basis"] == "assumed" for entry in material["provenance"].values())
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    assert not app.exception
+    assert any(button.label == "Download example material JSON" for button in app.get("download_button"))
+
+
+def test_copy_guided_setup_to_advanced_json_and_run_with_name(isolated):
+    source, data = isolated
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    app.selectbox(key="config_mode").set_value("Advanced JSON").run()
+    app.selectbox(key="config_stop_after").set_value("material_manager")
+    app.text_input(key="config_experiment_id").set_value("old-draft")
+    app.selectbox(key="config_mode").set_value("Guided setup").run()
+    app.number_input(key="fillet_volume_mm3_0").set_value(.03)
+    app.number_input(key="connection_0").set_value(3)
+    app.multiselect(key="Derived model quantity_0").set_value(["liquid_air_surface_energy_J"])
+    next(button for button in app.button if button.label == "Copy to Advanced JSON").click().run()
+    assert not app.exception and not app.error
+    assert app.selectbox(key="config_mode").value == "Advanced JSON"
+    assert app.selectbox(key="config_stop_after").value is None
+    assert app.text_input(key="config_experiment_id").value == ""
+    config = json.loads(app.text_area(key="config_editor").value)
+    assert config["inputs"]["step_file"] == str(source)
+    assert config["steps"]["cad_extractor"]["selection"]["pin_index"] == 3
+    assert config["steps"]["material_manager"]["simulation"]["fillet_volume_mm3"] == .03
+    assert "liquid_air_surface_energy_J" in config["steps"]["surface_evolver"]["outputs"]
+    assert not runner.is_busy()
+
+    app.text_input(key="config_experiment_id").set_value("named-pico")
+    next(button for button in app.button if button.label == "Run configured experiment").click().run()
+    wait_until(lambda: (data / "ready").exists())
+    assert runner.active_job()["id"] == "named-pico"
+    assert runner.read_json(data / ".dashboard-request.json") == config
+    (data / "release").touch()
+    wait_until(lambda: not runner.active_job())
+
+
+def test_guided_saves_loads_and_submits_material_physics_and_outputs(isolated):
+    _, data = isolated
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    app.selectbox(key="alloy_0").set_value("SAC305").run()
+    assert app.number_input(key="surface_tension_N_per_m_0_SAC305").value == .4337
+    assert app.number_input(key="density_kg_per_m3_0_SAC305").value == 7290.0
+    assert app.number_input(key="pin_contact_angle_deg_0_SAC305").value is None
+    assert app.selectbox(key="density_kg_per_m3_0_SAC305_basis").value == "literature"
+    for name, value in {"surface_tension_N_per_m": .45, "density_kg_per_m3": 7300.0,
+                        "pin_contact_angle_deg": 73.0}.items():
+        app.number_input(key=f"{name}_0_SAC305").set_value(value)
+    app.number_input(key="gravity_m_per_s2_0").set_value(9.81)
+    app.multiselect(key="Derived model quantity_0").set_value(["liquid_air_surface_energy_J"])
+    next(button for button in app.button if button.label == "Save configuration").click().run()
+    assert not app.exception and not app.error
+    saved = next((data / "configurations").glob("*.json"))
+    config = runner.read_json(saved)
+    assert config["steps"]["material_manager"]["material"]["alloy"] == "SAC305"
+    assert config["steps"]["material_manager"]["material"]["surface_tension_N_per_m"] == .45
+    assert config["steps"]["material_manager"]["material"]["provenance"]["surface_tension_N_per_m"]["basis"] == "assumed"
+    assert config["steps"]["material_manager"]["simulation"]["gravity_m_per_s2"] == 9.81
+    assert "liquid_air_surface_energy_J" in config["steps"]["surface_evolver"]["outputs"]
+    next(box for box in app.selectbox if box.label == "Saved configuration").set_value(saved).run()
+    next(button for button in app.button if button.label == "Load configuration").click().run()
+    assert app.number_input(key="gravity_m_per_s2_1").value == 9.81
+    next(button for button in app.button if button.label == "Run experiment").click().run()
+    assert not app.exception and not app.error
+    wait_until(lambda: (data / "ready").exists())
+    request = runner.read_json(data / ".dashboard-request.json")
+    assert request == config
+    (data / "release").touch()
+    wait_until(lambda: not runner.active_job())
+
+
+def test_ui_evaluates_calibrates_and_reloads_settings(isolated, monkeypatch):
+    source, data = isolated
+    run = data / "experiments" / "example"
+    height = "maximum_height_above_pad_mm"
+    runner.write_json(run / "exp_report.json", {"status": "completed"})
+    runner.write_json(run / "input/config.json", {"inputs": {"step_file": str(source)}, "steps": {}})
+    runner.write_json(run / "simulation/metrics.json", {height: .06, "numerical_pass": True})
+    runner.write_json(run / "simulation/selected_outputs.json", {"outputs": [
+        {"metric": height, "label": "Height", "value": .06, "unit": "mm", "category": "Geometry"},
+    ]})
+    app = AppTest.from_file(str(Path(__file__).with_name("app.py"))).run()
+    next(box for box in app.multiselect if box.label == "Observed quantities").set_value([height]).run()
+    scope = f"dataset_{run}"
+    app.number_input(key=f"{scope}_{height}").set_value(.05)
+    app.number_input(key=f"{scope}_{height}_tolerance").set_value(.02)
+    next(button for button in app.button if button.label == "Use measurements").click().run()
+    assert not app.exception and not app.error
+    next(button for button in app.button if button.label == "Save comparison").click().run()
+    receipt = runner.read_json(next((data / "comparisons").glob("*.json")))
+    assert receipt["comparison"]["observations"][0]["absolute_percentage_error"] == pytest.approx(20)
+
+    study = data / "calibrations" / "study_test"
+    fitted = "steps.material_manager.material.pin_contact_angle_deg"
+    captured = {}
+
+    def submit(config_path, measurements, grid):
+        captured.update(config=runner.read_json(config_path), measurements=measurements, grid=grid)
+        row = {"candidate": 1, "parameters": {fitted: 75}, "score": .25, "measurement_agreement": "passed"}
+        runner.write_json(study / "calibration_report.json", {"status": "success", "candidates": [row], "best": row})
+        best_config = captured["config"]
+        best_config["steps"]["material_manager"]["material"]["pin_contact_angle_deg"] = 75
+        runner.write_json(study / "best_pipeline.json", best_config)
+        return {"experiment_dir": str(study)}
+
+    monkeypatch.setattr(runner, "start_calibration", submit)
+    app.multiselect(key=f"fits_{run}").set_value([fitted]).run()
+    app.text_input(key=f"grid_{run}_pin_contact_angle_deg").set_value("75,85")
+    next(button for button in app.button if button.label == "Run calibration").click().run()
+    assert not app.exception and not app.error
+    assert captured["grid"]["parameters"] == {fitted: [75.0, 85.0]}
+    assert captured["measurements"]["observations"][height]["value"] == .05
+    next(button for button in app.button if button.label == "Load best-fit settings for rerun").click().run()
+    assert app.number_input(key="pin_contact_angle_deg_1_None").value == 75
+
+    next(button for button in app.button if button.label == "Edit settings and rerun").click().run()
+    assert not app.exception and not app.error
+    assert app.session_state["experiment_tab"] == "Inputs & Configuration"
+    config = app.session_state["guided_config"]
+    assert config["inputs"]["step_file"] == str(source)
+    observations = runner.read_json(Path(config["inputs"]["measurements_file"]))["observations"]
+    assert observations[height]["value"] == .05
+    assert config["steps"]["evaluation"]["require_measurement_agreement"] is False

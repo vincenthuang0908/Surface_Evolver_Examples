@@ -6,6 +6,8 @@ manager; compare_experiments() only compares already completed artifacts.
 from __future__ import annotations
 import argparse
 from collections import Counter
+import csv
+import io
 from pathlib import Path
 import math
 import numpy as np
@@ -13,9 +15,11 @@ from scipy.spatial import cKDTree
 from ..common import (ComponentError, cli_entry, config_arg, load_config, logger_or_default,
                       positive, read_json, require_file, result, section, sha256, write_json)
 from ..mesh import read_off, require_valid_mesh
+from .observables import OBSERVABLES
 
-MEASURABLE = {"volume_mm3", "fillet_volume_mm3", "free_surface_area_mm2",
-              "maximum_height_above_pad_mm", "pressure_Pa", "energy_J"}
+MEASURABLE = {key for key, metric in OBSERVABLES.items() if metric.category == "Geometry"}
+# Keep support for existing CLI datasets comparing modeled energy or pressure.
+_COMPARABLE = MEASURABLE | {"pressure_Pa", "energy_J", "liquid_air_surface_energy_J"}
 
 
 def _step_exports(root):
@@ -23,26 +27,83 @@ def _step_exports(root):
             if path.is_file() and path.suffix.lower() in {".step", ".stp"})
 
 
-def compare_measurements(metrics: dict, measurements: dict) -> dict:
+def validate_measurements(measurements: dict, *, allowed=None) -> dict:
+    if not isinstance(measurements, dict) or measurements.get("schema_version", 1) != 1:
+        raise ComponentError("Expected a schema version 1 measurement dataset")
     observations = measurements.get("observations")
     if not isinstance(observations, dict) or not observations:
         raise ComponentError("Measurement file must contain nonempty observations; the template is not real measurement data")
+    if not isinstance(measurements.get("source", ""), str):
+        raise ComponentError("Measurement source must be text")
+    allowed = _COMPARABLE if allowed is None else allowed
+    validated = {}
+    for name, observation in observations.items():
+        if name not in allowed:
+            raise ComponentError(f"Unsupported or unselected observation {name!r}")
+        if not isinstance(observation, dict):
+            raise ComponentError(f"Observation {name} must provide a value and absolute_tolerance")
+        unit = OBSERVABLES[name].unit
+        aliases = {"mm³": "mm^3", "mm²": "mm^2", "°": "deg"}
+        if observation.get("unit", unit) not in (unit, aliases.get(unit, unit)):
+            raise ComponentError(f"Observation {name} must use {unit}")
+        try:
+            if isinstance(observation.get("value"), bool):
+                raise ValueError
+            measured = float(observation["value"])
+        except (ValueError, TypeError, KeyError, OverflowError) as exc:
+            raise ComponentError(f"Observation {name} needs a finite numeric value") from exc
+        if (not math.isfinite(measured) or (name in MEASURABLE and measured < 0)
+                or (unit == "°" and measured > 180)):
+            raise ComponentError(f"Observation {name} is outside its physical range")
+        tolerance = positive(observation.get("absolute_tolerance"), f"{name}.absolute_tolerance")
+        validated[name] = {**observation, "value": measured, "absolute_tolerance": tolerance, "unit": unit}
+    return {**measurements, "schema_version": 1, "observations": validated}
+
+
+def measurements_from_csv(text):
+    """Read one observation per metric, using the same contract as JSON."""
+    reader = csv.DictReader(io.StringIO(text), strict=True)
+    fields = {"metric", "value", "unit", "absolute_tolerance"}
+    observations = {}
+    try:
+        if not fields.issubset(reader.fieldnames or []):
+            raise ComponentError("CSV needs metric, value, unit, and absolute_tolerance columns")
+        for row in reader:
+            if None in row or any(row[field] is None for field in fields):
+                raise ComponentError(f"Incorrect CSV column count on line {reader.line_num}")
+            metric = row["metric"].strip()
+            if not metric or metric in observations:
+                raise ComponentError(f"CSV metric is blank or repeated on line {reader.line_num}")
+            observations[metric] = {field: row[field] for field in fields - {"metric"}}
+    except csv.Error as exc:
+        raise ComponentError(f"Invalid CSV near line {reader.line_num}: {exc}") from exc
+    return validate_measurements({"observations": observations})
+
+
+def compare_measurements(metrics: dict, measurements: dict) -> dict:
+    observations = validate_measurements(measurements)["observations"]
     rows = []; score = 0.0
     for name, observation in observations.items():
-        if name not in MEASURABLE:
-            raise ComponentError(f"Unsupported measurement {name!r}; allowed names: {sorted(MEASURABLE)}")
         if name not in metrics or metrics[name] is None:
             raise ComponentError(f"Simulation did not produce measured quantity {name}")
-        measured = float(observation["value"]); prediction = float(metrics[name])
-        tolerance = positive(observation["absolute_tolerance"], f"{name}.absolute_tolerance")
-        if not math.isfinite(measured) or not math.isfinite(prediction):
-            raise ComponentError("Measurement values and predictions must be finite")
-        difference = abs(prediction-measured); score += (difference/tolerance)**2
+        measured = observation["value"]; prediction = float(metrics[name])
+        tolerance = observation["absolute_tolerance"]
+        if not math.isfinite(prediction):
+            raise ComponentError(f"Prediction for {name} must be finite")
+        difference = abs(prediction-measured)
+        relative = difference/tolerance
+        squared = relative * relative
+        percentage = 100 * (difference / abs(measured)) if measured else None
+        if not math.isfinite(squared) or (percentage is not None and not math.isfinite(percentage)):
+            raise ComponentError(f"Errors for {name} exceed the supported numeric range")
+        score += squared / len(observations)
         rows.append({"metric": name, "measured": measured, "predicted": prediction,
-                     "absolute_difference": difference, "absolute_tolerance": tolerance,
+                     "unit": observation["unit"], "absolute_difference": difference,
+                     "absolute_percentage_error": percentage, "absolute_tolerance": tolerance,
+                     "signed_error_over_tolerance": (prediction-measured)/tolerance,
                      "passed": difference <= tolerance})
     return {"status": "passed" if all(row["passed"] for row in rows) else "failed",
-            "observations": rows, "mean_normalized_squared_error": score/len(rows),
+            "observations": rows, "mean_normalized_squared_error": score,
             "scope": "Agreement for the supplied observables only; not general physical validation"}
 
 
@@ -118,9 +179,11 @@ def evaluate_experiment(experiment_dir, config=None, output_dir=None, logger=Non
                 raise ComponentError("Simulation differs from supplied measurements beyond their tolerances")
             return measurement_report
         check("CAL-T01", "Agreement with supplied measurements", measurement_check)
+        if measurement_report["status"] == "failed" and not settings.get("require_measurement_agreement", True):
+            tests[-1]["required"] = False
     if not tests:
         raise ComponentError("No artifacts were requested or found for evaluation")
-    passed = all(test["passed"] for test in tests)
+    passed = all(test["passed"] or not test.get("required", True) for test in tests)
     report = {"schema_version": 1, "component": "evaluation", "status": "success" if passed else "failed",
               "passed": passed, "tests": tests, "measurements": measurement_report,
               "physical_validation": False,

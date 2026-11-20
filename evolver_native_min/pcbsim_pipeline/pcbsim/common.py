@@ -104,7 +104,7 @@ def positive(value: Any, name: str, *, allow_zero: bool = False) -> float:
         raise ComponentError(f"{name} must be a finite number, not a boolean")
     try:
         number = float(value)
-    except (ValueError, TypeError) as exc:
+    except (ValueError, TypeError, OverflowError) as exc:
         raise ComponentError(f"{name} must be a finite number") from exc
     if not math.isfinite(number) or number < 0 or (number == 0 and not allow_zero):
         raise ComponentError(f"{name} must be finite and {'nonnegative' if allow_zero else 'positive'}")

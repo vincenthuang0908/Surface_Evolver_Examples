@@ -17,7 +17,7 @@ import uuid
 import psutil
 
 from pcbsim.common import ComponentError, expand_step_configs, integer, read_json, resolve_path, utc_now, write_json
-from pcbsim.components.experiment_manager import requested_stages, validate_experiment_id
+from pcbsim.components.experiment_manager import next_run_id, requested_stages, validate_experiment_id
 from pcbsim.components.material_manager import normalize_materials
 
 _state_lock = threading.RLock()
@@ -72,6 +72,8 @@ def _process(record: dict) -> psutil.Process | None:
 
 
 def _successful(run: Path, report: dict, record: dict) -> bool:
+    if record.get("kind") == "calibration":
+        return report.get("status") == "success"
     return (report.get("status") == "completed"
             and (not record.get("require_full_checks", True)
                  or (load_json(run / "simulation/metrics.json").get("numerical_pass") is True
@@ -104,12 +106,17 @@ def _cleanup_success(record: dict) -> None:
             _state_path().unlink(missing_ok=True)
 
 
+def _job_report(run: Path, record: dict) -> dict:
+    filename = "calibration_report.json" if record.get("kind") == "calibration" else "exp_report.json"
+    return load_json(run / filename)
+
+
 def active_job() -> dict:
     with _state_lock:
         record = load_json(_state_path())
         if record.get("status") == "completed" and _process(record) is None:
             run = Path(record["experiment_dir"])
-            if _successful(run, load_json(run / "exp_report.json"), record):
+            if _successful(run, _job_report(run, record), record):
                 _cleanup_success(record)
                 return {}
         if record.get("status") not in BUSY_STATES:
@@ -122,7 +129,7 @@ def active_job() -> dict:
         if not record.get("pid") and time.time() - record.get("submitted_epoch", 0) < 10:
             return record
         run = Path(record["experiment_dir"])
-        report = load_json(run / "exp_report.json")
+        report = _job_report(run, record)
         if _successful(run, report, record):
             _cleanup_success(record)
             return {}
@@ -144,10 +151,10 @@ def is_busy() -> bool:
     return False
 
 
-def save_upload(content: bytes, suffix: str = ".step") -> Path:
+def save_upload(content: bytes, suffix: str = ".step", *, folder: str = "uploads") -> Path:
     if not content:
         raise ValueError("The uploaded file is empty.")
-    path = data_dir() / "uploads" / (hashlib.sha256(content).hexdigest() + suffix)
+    path = data_dir() / folder / (hashlib.sha256(content).hexdigest() + suffix)
     path.parent.mkdir(parents=True, exist_ok=True)
     # Exclusive creation avoids concurrent uploads truncating an existing input.
     with _state_lock:
@@ -164,7 +171,8 @@ def _finish(process: subprocess.Popen, record: dict) -> None:
     code = process.wait()  # A controller thread waits; the Streamlit UI never does.
     with _state_lock:
         current = load_json(_state_path())
-        report = load_json(Path(record["experiment_dir"]) / "exp_report.json")
+        run = Path(record["experiment_dir"])
+        report = _job_report(run, record)
         interrupted = _same_job(current, record) and current.get("status") == "interrupted"
         if not interrupted and code == 0 and _successful(Path(record["experiment_dir"]), report, record):
             _cleanup_success(record)
@@ -172,10 +180,13 @@ def _finish(process: subprocess.Popen, record: dict) -> None:
         record.update(status="interrupted" if interrupted else
                       "failed",
                       returncode=code, finished_at=utc_now())
-        record["error"] = (current.get("error") if interrupted else
-                           report.get("error") or (f"Pipeline exited with code {code}." if code else
-                                                   "Pipeline did not pass all numerical and CAD checks."))
-        run = Path(record["experiment_dir"])
+        if record.get("kind") == "calibration" and report.get("status") == "failed":
+            error = "No eligible calibration candidate. See the candidate history for details."
+        else:
+            error = f"Process exited with code {code}." if code else "Pipeline did not pass all numerical and CAD checks."
+        record["error"] = current.get("error") if interrupted else report.get("error") or error
+        if record.get("kind") == "calibration":
+            run.mkdir(parents=True, exist_ok=True)
         if run.is_dir():
             log = Path(record["log"])
             destination = run / "launcher.log"
@@ -185,6 +196,55 @@ def _finish(process: subprocess.Popen, record: dict) -> None:
             write_json(run / "dashboard.json", record)
         if _same_job(current, record):
             write_json(_state_path(), record)
+
+
+def _launch(command, record, lock):
+    write_json(_state_path(), record)
+    try:
+        with Path(record["log"]).open("w", encoding="utf-8") as log:
+            process = subprocess.Popen(
+                command, cwd=app_dir(), stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
+                start_new_session=True, pass_fds=(lock.fileno(),))
+        record.update(pid=process.pid, process_created=psutil.Process(process.pid).create_time(), status="running")
+        write_json(_state_path(), record)
+    except Exception as exc:
+        if "process" in locals():
+            _terminate(process.pid)
+            process.wait()
+        record.update(status="failed", error=f"Unable to launch process: {exc}", finished_at=utc_now())
+        write_json(_state_path(), record)
+        raise RuntimeError(record["error"]) from exc
+    for previous, monitor in list(_monitors.items()):
+        if not monitor.is_alive():
+            _monitors.pop(previous)
+    monitor = threading.Thread(target=_finish, args=(process, record.copy()), daemon=True)
+    _monitors[record["submission_id"]] = monitor
+    monitor.start()
+    # The child inherits the lock and holds it even if the dashboard process exits.
+    return record
+
+
+def start_calibration(baseline_config: Path, measurements: dict, grid: dict) -> dict:
+    with _lock_path().open("a+") as lock, _state_lock:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError as exc:
+            raise RuntimeError("An experiment or calibration is already running.") from exc
+        submission_id = uuid.uuid4().hex
+        study_id = time.strftime("study_%Y%m%d_%H%M%S_") + submission_id[:8]
+        study = (data_dir() / "calibrations" / study_id).resolve()
+        # The calibration engine claims the study directory and snapshots these
+        # inputs. Staging is separate so a launch error remains inspectable.
+        request = data_dir() / "calibration_requests" / study_id
+        grid_path = write_json(request / "grid.json", grid).resolve()
+        measurements_path = write_json(request / "measurements.json", measurements).resolve()
+        record = dict(kind="calibration", id=study_id, submission_id=submission_id, status="starting",
+                      submitted_at=utc_now(), submitted_epoch=time.time(), experiment_dir=str(study),
+                      log=str(data_dir() / f".{submission_id}.launcher.log"))
+        command = [sys.executable, "-m", "pcbsim.components.calibration",
+                   "--config", str(baseline_config.resolve()), "--grid", str(grid_path),
+                   "--measurements", str(measurements_path), "--output-dir", str(study)]
+        return _launch(command, record, lock)
 
 
 def start_experiment(source: Path, pin_index: int, volume: float, angle: float) -> dict:
@@ -235,7 +295,7 @@ def start_configured_experiment(config: dict, *, config_base: str | Path | None 
         except BlockingIOError as exc:
             raise RuntimeError("An experiment is already running. Wait for it to finish.") from exc
         submission_id = uuid.uuid4().hex
-        run_id = experiment_id or time.strftime("run_%Y%m%d_%H%M%S_") + submission_id[:8]
+        run_id = experiment_id or next_run_id(root)
         run = root / run_id
         if run.exists() or run.is_symlink():
             raise ValueError(f"Experiment already exists: {run}")
@@ -245,37 +305,13 @@ def start_configured_experiment(config: dict, *, config_base: str | Path | None 
         record = dict(id=run_id, submission_id=submission_id, status="starting", submitted_at=utc_now(),
                       submitted_epoch=time.time(), experiment_dir=str(run), require_full_checks=require_full_checks,
                       log=str(data_dir() / f".{submission_id}.launcher.log"))
-        write_json(_state_path(), record)
         command = [sys.executable, str(app_dir() / "run_pipeline.py"),
                    "--config", str(config_path), "--experiment-id", run_id]
         if stop_after:
             command.extend(["--stop-after", stop_after])
         if only:
             command.extend(["--only", *only])
-        try:
-            with Path(record["log"]).open("w", encoding="utf-8") as log:
-                process = subprocess.Popen(
-                    command,
-                    cwd=app_dir(), stdin=subprocess.DEVNULL, stdout=log, stderr=subprocess.STDOUT,
-                    start_new_session=True, pass_fds=(lock.fileno(),))
-            record.update(pid=process.pid, process_created=psutil.Process(process.pid).create_time(), status="running")
-            write_json(_state_path(), record)
-        except Exception as exc:
-            if "process" in locals():
-                _terminate(process.pid)
-                process.wait()
-            record.update(status="failed", error=f"Unable to launch pipeline: {exc}", finished_at=utc_now())
-            write_json(_state_path(), record)
-            raise RuntimeError(record["error"]) from exc
-        for previous, monitor in list(_monitors.items()):
-            if not monitor.is_alive():
-                _monitors.pop(previous)
-        monitor = threading.Thread(target=_finish, args=(process, record.copy()), daemon=True)
-        _monitors[submission_id] = monitor
-        monitor.start()
-        # Closing only our FD leaves the inherited lock held by the pipeline
-        # until it exits, even if Streamlit is refreshed or unexpectedly stops.
-        return record
+        return _launch(command, record, lock)
 
 
 def _terminate(pid: int) -> None:

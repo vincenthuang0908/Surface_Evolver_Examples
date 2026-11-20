@@ -15,8 +15,52 @@ The model assumes a fully filled, stationary barrel and one top-side fillet. Its
 - Solder volume settings change the top fillet, not the filled barrel.
 - The simulation does not predict heating, flow over time, cooling, solidification, or joint strength.
 - The exported solder is a faceted solid, represented by triangular faces.
-- With gravity disabled, density does not affect shape; surface tension sets energy and pressure scales. Volume and pin contact angle influence the equilibrium shape.
+- With gravity disabled, density and surface tension do not affect shape. Surface tension still sets the energy and pressure scales. Volume and the pin Young contact angle affect shape when the pin contact line is mobile.
 - Default material values are illustrative, not calibrated to a particular alloy or process.
+
+## Dashboard workflow
+
+### Run the supplied Pico sample
+
+1. Start the Docker dashboard using the [setup guide](SETUP.md). Open **Experiments → Tutorial & Documentation** and select **Load Pico sample into Guided setup**.
+2. Confirm **Supplied Pico example** and connection index **1** in **Inputs & Configuration**. The sample uses **0.025 mm³** of solder above the pad, **0 m/s²** gravity, a mobile pin contact line, and illustrative material inputs of **0.5 N/m**, **7400 kg/m³**, and **80°**. Keep **Export and validate STEP** checked.
+3. Select **Run experiment** and follow the stage table. Open **Results** to view the assembly and download the selected outputs and STEP files. Runs are saved under `data/experiments/` with sequential names such as `run001` and `run002`.
+4. To practice the comparison, select the completed run in **Evaluation & Calibration**. Enter a synthetic maximum height above pad of **0.060 mm** with an absolute tolerance of **0.005 mm**, then select **Use measurements**. Use observations from a matching joint for an experimental comparison.
+
+### Configure your own run
+
+1. **Configure.** Open **Inputs & Configuration → Guided setup**. Choose a STEP assembly and the geometric connection index. Use the illustrative material for an example run, or select SAC305, Sn63Pb37, or a custom material. Built-in alloy presets cite composition from the [Indium Corporation bar-solder data](https://www.indium.com/products/bar-solder/). Review or enter liquid surface tension in N/m, liquid density in kg/m³, and the Young angle through the liquid on the pin finish in degrees. For each value, choose its basis and record the reference, temperature, and relevant surface, flux, or atmosphere conditions.
+2. **Simulate.** Set the top-fillet volume in mm³, downward gravity in m/s², and whether the pin contact line can slide. The volume multiplier and angle offset modify the base inputs. Under **Mesh and solver**, set resolution, relaxation steps, convergence tolerances, and timeout. Select the quantities to export under **Numerical outputs**. **Export and validate STEP** adds the CAD stage. **Run experiment** creates a new run. **Results** offers the selected output CSV and JSON, STEP files, solver logs, and the full numerical receipt.
+3. **Evaluate.** Open **Evaluation & Calibration**, choose the run, and enter observations or load a JSON or CSV dataset. Each observation uses the units shown beside its quantity and includes a positive absolute tolerance. CSV uses the headers `metric,value,unit,absolute_tolerance`, with one row per metric. Use `mm`, `mm^2`, `mm^3`, or `deg` as appropriate. The comparison shows absolute error, absolute percentage error (blank when the measured value is zero), and signed error divided by tolerance.
+4. **Calibrate and rerun.** Use **Edit settings and rerun** to load the reference experiment’s configuration and carry its dataset forward. To search automatically, select uncertain parameters and enter comma-separated values for each. The search runs every combination up to the limit you set. Candidates must pass numerical checks and any enabled STEP validation. The lowest mean squared tolerance-normalized error wins, even if some observations remain outside tolerance. Review the candidate history and select **Load best-fit settings for rerun**. Fitted inputs are labeled **Calibrated effective** and link to their study.
+5. **Save and revisit.** Use **Save material preset**, **Save configuration**, **Save dataset**, and **Save comparison**. Their JSON records live under `data/materials/`, `data/configurations/`, `data/measurements/`, and `data/comparisons/`. Use the matching load controls or download the JSON. A calibration study in `data/calibrations/` saves its input snapshots, measurements, trial grid, ordered results, each candidate’s experiment, and its best-fit configuration. Saved dashboard configurations use absolute paths inside the container. Keep the experiment or study directories with their inputs, or rebase file paths before reusing them in a different environment.
+
+**Advanced JSON** retains all stage and intermediate-artifact controls. It also accepts `steps.surface_evolver.outputs`, a list of metric keys. Omitting the list selects height, top-fillet volume, total volume, and liquid–air area by default. The pipeline still writes its existing `simulation/metrics.json` receipt, including all required solver diagnostics. The selected quantities are in `simulation/selected_outputs.json`.
+
+To name a run configured in **Guided setup**, select **Copy to Advanced JSON**. This replaces the Advanced JSON draft with your current settings and opens the editor. Enter an **Experiment ID** and select **Run configured experiment** when ready. **Save configuration** stores a reusable copy on the server.
+
+### SAC305 starter properties
+
+Selecting **SAC305** fills in two editable literature values for molten solder at **250 °C**. The pin Young contact angle is entered separately for the actual pin finish and soldering conditions. Existing saved configurations keep their explicit values.
+
+- **Liquid surface tension, 0.4337 N/m.** Published value for nominal SAC305, converted from 433.7 mN/m. [Caribe Couvertier et al., Table 3](https://doi.org/10.3390/electronicmat7030019)
+- **Liquid density, about 7290 kg/m³.** Rounded from the published linear fit, using 7320 kg/m³ at 493 K and a decrease of 0.86 kg/m³ per kelvin up to 523.15 K. [Varanasi and Pal, Table 2](https://doi.org/10.1007/s11106-021-00262-w)
+
+### Upload and reuse a material preset
+
+1. Open **Tutorial & Documentation → Upload and reuse an example material** and select **Download example material JSON**. You can also get the file from the [repository](../dashboard/example_material.json). It uses the Pico sample’s illustrative values of **0.5 N/m** liquid surface tension, **7400 kg/m³** liquid density, and **80°** pin Young contact angle, all marked **Assumed**.
+2. Open **Inputs & Configuration → Guided setup → Saved material presets**. Upload the file under **Material preset JSON** and select **Load material**. Check that the **Material** section displays **Pico tutorial solder**.
+3. Select **Save material preset** to save it on the dashboard server. For future runs, clear any attached file from the uploader, choose **Pico tutorial solder** from **Saved material**, and select **Load material**. The **Alloy preset** dropdown contains the built-in alloy choices.
+
+To create a preset file, copy the example JSON and edit the name and the three properties inside `material`. The keys are `surface_tension_N_per_m`, `density_kg_per_m3`, and `pin_contact_angle_deg`. Use the units given in the keys and update each property’s `provenance` to reflect where its value came from.
+
+### How to interpret outputs and physical inputs
+
+- **Comparable geometry:** height is measured above the top pad plane. Total solder volume includes the fixed barrel. The simulated top-fillet volume is prescribed, so agreement in volume primarily checks the solder amount and volume constraint. Match the definition of liquid–air area, wetted pin area, and total shell area to the measurement method.
+- **Apparent contact angles:** the pin and pad values are edge-length-weighted estimates through the liquid, computed from adjacent free-surface and wall triangles. They depend on local geometry and mesh resolution. They are unavailable without labeled, shared contact edges. A microscopic, advancing, or receding contact angle requires different modeling or measurements. The input Young angle supplies the mobile pin’s wetting energy. The apparent pad angle can be estimated from the pinned boundary, but the pad angle cannot be prescribed independently or used to model pad spreading.
+- **Derived model quantities:** liquid–air energy is `γ × A_liquid–air` with area in m². The solver’s total modeled energy adds the relative pin wetting energy and gravity, using its own energy reference. Body pressure is the volume constraint multiplier in pressure units. These quantities are exported separately from the directly comparable geometry and from numerical residuals.
+- **Scaling and boundary conditions:** with millimeter coordinates, energy is scaled by `γ × (10⁻³ m)²`, pressure by `γ / (10⁻³ m)`, and the Evolver gravity coefficient is `ρ g (10⁻³ m)² / γ`. The normalized free-surface and wetted-pin facet tensions are `1` and `−cos(θ)`. A pinned pin line stays at the height calculated for the initial mesh and volume. The fixed pad edge, fully filled barrel, top-only fillet, and straight pin walls constrain all runs. See the [Surface Evolver energy documentation](https://kenbrakke.com/evolver/html/energies.htm) and [manual](https://kenbrakke.com/evolver/downloads/manual270.pdf).
+- **Fitting limits:** shape alone at zero gravity cannot identify liquid density or surface tension. At nonzero gravity the geometry responds to their ratio with gravity, so varying all three together can produce indistinguishable shapes. Use independent property measurements and inspect ties and tolerance failures. Contact angle fitting requires a mobile pin line, and a result at the straight-pin height limit may be affected by the omitted bevel. Viscosity, temperature evolution, flux chemistry, pin-tip wetting, a bottom meniscus, and partial barrel fill are outside this equilibrium model.
 
 ## Run it
 
@@ -37,7 +81,7 @@ Use `pipeline.json` to select the geometry, material settings, and solver settin
 docker compose -f docker/compose.yaml run --rm pipeline python run_pipeline.py --config /app/pipeline.json
 ```
 
-   Use the dashboard to change the STEP, connection index, volume, or contact angle interactively. The baseline config is mounted from the checkout. **Advanced JSON** exposes all stage settings and **Tutorial & Documentation** includes a runnable Run 6 preset.
+   The dashboard baseline config is mounted from the checkout. **Tutorial & Documentation** includes a runnable Run 6 example.
 
 4. **Inspect the new run folder** under `data/experiments/`:
    - `exp_report.json`: overall outcome and any failed stage.
@@ -79,14 +123,14 @@ The measurement interface compares numerical quantities supplied in JSON; it doe
 }
 ```
 
-2. From the project root, evaluate a completed run. Replace `run_001` with your run.
+2. From the project root, evaluate a completed run. Replace `run001` with your run.
 
 ```sh
-docker compose -f docker/compose.yaml run --rm pipeline python -m pcbsim.components.evaluation --config /app/pipeline.json evaluate --experiment /data/experiments/run_001 --measurements /data/my_measurements.json
+docker compose -f docker/compose.yaml run --rm pipeline python -m pcbsim.components.evaluation --config /app/pipeline.json evaluate --experiment /data/experiments/run001 --measurements /data/my_measurements.json
 ```
 
 3. Read `evaluation/automated_test_results.json` inside that run. For the example, a prediction of `0.057 mm` differs by `0.003 mm`, so it passes the `0.005 mm` tolerance. Passing this comparison establishes agreement for that quantity, not every aspect of the joint.
-4. Add other supported quantities when measured: `fillet_volume_mm3`, `volume_mm3` (barrel plus fillet), `free_surface_area_mm2`, `pressure_Pa`, or `energy_J`. Each observation needs a `value` and a positive `absolute_tolerance` in the named units. Full profile or scan comparisons require separate analysis.
+4. Add supported geometry observations such as `fillet_volume_mm3`, `volume_mm3` (barrel plus fillet), or `free_surface_area_mm2`. Each observation needs a `value` and a positive `absolute_tolerance` in the named units. The CLI also accepts references for derived energy and pressure quantities when their definitions match. Full profile or scan comparisons require separate analysis.
 
 ## Calibrate materials
 
@@ -95,7 +139,7 @@ Calibration adjusts uncertain physical settings to reduce disagreement with meas
 1. **Define the conditions:** record alloy, soldering temperature, surface finishes, flux conditions, and joint geometry. Contact angle reflects the interacting surfaces and process, not the alloy alone.
 2. **Collect measurements:** measure suitable quantities, such as fillet height, with realistic uncertainty. Use the JSON format above. Keep measured solder volume and known material properties fixed where possible.
 3. **Choose uncertain settings:** typically start with pin contact angle. Define plausible candidate values rather than changing unrelated settings to force a match.
-4. **Run candidate simulations:** the calibration tool tries every combination in a bounded parameter grid, excluding candidates that fail numerical convergence or CAD validation.
+4. **Run candidate simulations:** the calibration tool tries every combination in a bounded parameter grid. CLI studies require CAD validation by default. For a solver-only study, disable `steps.cad_converter.enabled` in the baseline and set `require_cad_validation: false` in the grid JSON. All studies require a passing numerical gate.
 5. **Rank agreement:** differences are divided by the supplied tolerances, squared, and averaged. A smaller score means a closer match relative to those tolerances.
 6. **Check acceptance:** the best candidate is only the best among the values tried. Confirm whether it actually meets the measurement tolerances; the tool can select a best candidate even when all candidates disagree too much.
 7. **Verify independently:** apply the selected settings to separate measured joints without refitting. Compare additional geometries or solder amounts before treating the calibration as broadly applicable.

@@ -21,6 +21,7 @@ from .._vendor.evolver_native import native as legacy
 from ..common import (ComponentError, cli_entry, config_arg, integer, load_config,
                       logger_or_default, positive, read_json, require_file, section, sha256, utc_now, write_json)
 from ..mesh import require_valid_mesh, write_off
+from .observables import ANGLE_REGIONS, OBSERVABLES, mesh_contact_angles, selected_outputs
 
 
 def find_executable(requested=None) -> str | None:
@@ -41,7 +42,7 @@ def build_commands(metadata: dict, settings: dict) -> str:
     has_body = metadata.get("body_volume_target") is not None
     body_id = integer(metadata.get("body_id", 1), "body_id", 1)
     text = legacy.commands(has_body=has_body, refinements=refinements, steps=steps)
-    text = text.replace("body[1]", f"body[{body_id}]").replace("g 30\n", f"g {warmup}\n", 1)
+    text = text.replace("body[1]", f"body[{body_id}]").replace("g 30\n", f"g {warmup}\n" if warmup else "", 1)
     if not settings.get("edge_swaps", False):
         text = text.replace("\nu\n", "\n")
     # Independent, fixed-length checks; increasing the relaxation budget must
@@ -112,6 +113,7 @@ def run_surface_evolver(model_path, config, output_dir, logger=None, *, metadata
               "physical_validation": False, "outputs": {}, "warnings": []}
     started = time.perf_counter(); write_json(manifest_path, report)
     try:
+        selection = selected_outputs(settings)
         model = require_file(model_path, "Surface Evolver model")
         possible_meta = Path(metadata_path) if metadata_path else model.with_suffix(".json")
         if possible_meta.is_file():
@@ -208,10 +210,19 @@ def run_surface_evolver(model_path, config, output_dir, logger=None, *, metadata
         if metadata.get("has_pcbsim_region"):
             region_map = {int(i): int(r) for i,r in re.findall(r'(?m)(?<!["\w])PCS_REGION\s+(\d+)\s+(\d+)\s*$', text)}
             face_ids = [int(row[0]) for row in re.findall(r'(?m)(?<!["\w])LAB_FACE\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s*$', text)]
-            if len(face_ids) != len(f) or any(i not in region_map for i in face_ids):
+            if len(face_ids) != len(f) or len(set(face_ids)) != len(f) or set(face_ids) != region_map.keys():
                 raise ComponentError("Generated model output is missing inherited surface-region labels")
-            areas = np.linalg.norm(np.cross(v[f[:,1]]-v[f[:,0]], v[f[:,2]]-v[f[:,0]]), axis=1)/2
-            metrics["free_surface_area_mm2"] = float(areas[[region_map[i]==1 for i in face_ids]].sum())
+            regions = np.array([region_map[i] for i in face_ids])
+            if set(regions) != {1, 2, 3, 4, 5}:
+                raise ComponentError("Generated model output has invalid or missing surface regions")
+            cross_products = np.cross(v[f[:,1]]-v[f[:,0]], v[f[:,2]]-v[f[:,0]])
+            areas = np.linalg.norm(cross_products, axis=1)/2
+            metrics["free_surface_area_mm2"] = float(areas[regions == 1].sum())
+            if "wetted_pin_area_mm2" in selection:
+                metrics["wetted_pin_area_mm2"] = float(areas[regions == 2].sum())
+            requested_angles = ANGLE_REGIONS.keys() & set(selection)
+            if requested_angles:
+                metrics.update(mesh_contact_angles(v, f, regions, cross_products, requested_angles))
             metrics["barrel_volume_mm3"] = metadata["barrel_volume_mm3"]
             metrics["fillet_volume_mm3"] = raw["volume"]-metadata["barrel_volume_mm3"]
             geometry = metadata.get("geometry", {})
@@ -225,8 +236,20 @@ def run_surface_evolver(model_path, config, output_dir, logger=None, *, metadata
         if scales:
             metrics["energy_J"] = raw["energy"]*scales["energy_J"]
             if "pressure" in raw: metrics["pressure_Pa"] = raw["pressure"]*scales["pressure_Pa"]
+            if "liquid_air_surface_energy_J" in selection and "free_surface_area_mm2" in metrics:
+                metrics["liquid_air_surface_energy_J"] = metrics["free_surface_area_mm2"] * scales["energy_J"]
+        # Legacy FE files may use an arbitrary datum for z, so the generic
+        # maximum-z value is kept in metrics.json but excluded from this export.
+        missing_datum = metadata.get("kind") != "pcbsim_through_hole"
+        values = [dict(metric=key, label=OBSERVABLES[key].label, unit=OBSERVABLES[key].unit,
+                       category=OBSERVABLES[key].category,
+                       value=None if missing_datum and key == "maximum_height_above_pad_mm" else metrics.get(key))
+                  for key in selection]
+        selected_path = write_json(out / "selected_outputs.json", {
+            "schema_version": 1, "numerical_pass": gate, "outputs": values})
         metrics_path = write_json(out / "metrics.json", metrics)
-        report["outputs"].update(mesh=str(mesh_path), metrics=str(metrics_path), mesh_arrays=str(out / "mesh.npz"))
+        report["outputs"].update(mesh=str(mesh_path), metrics=str(metrics_path), mesh_arrays=str(out / "mesh.npz"),
+                                 selected_outputs=str(selected_path))
         report.update(numerical_pass=gate, status="success")
         if not gate:
             report["warnings"].append("Native execution completed, but numerical convergence checks failed.")

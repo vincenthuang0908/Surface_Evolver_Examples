@@ -1,6 +1,3 @@
-# Local experiments, uploads, and archives
-/data/
-
 # Virtual environments
 .venv/
 venv/

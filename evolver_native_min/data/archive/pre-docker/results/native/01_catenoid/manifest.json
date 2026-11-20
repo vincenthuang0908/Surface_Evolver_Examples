@@ -1,0 +1,36 @@
+{
+  "backend": "surface_evolver",
+  "model": "C:\\...\\evolver_native_min\\models\\01_catenoid.fe",
+  "command_file": "C:\\...\\evolver_native_min\\results\\native\\01_catenoid\\run.cmd",
+  "model_sha256": "8b525ef3f760ae58356a4acd4ef6068a87fda3401868c79cda1959fa95f5ba16",
+  "command_sha256": "f169785e0683a686dc690ef67d05731544939f813715038a495cb325fd455dd2",
+  "native_evolver_executed": true,
+  "status": "executed",
+  "desired_command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\01_catenoid\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\01_catenoid.fe"
+  ],
+  "numerical_pass": false,
+  "physical_validation": false,
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\01_catenoid\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\01_catenoid.fe"
+  ],
+  "returncode": 0,
+  "wall_seconds": 4.8517376000017975,
+  "metrics": {
+    "initial_energy": 6.500246700397049,
+    "energy": 5.990676801342442,
+    "energy_drift": 5.963136826064037e-08,
+    "max_move": 0.00020322397387561138,
+    "area": 5.990676801342442,
+    "facets": 6144.0,
+    "complete": 1.0
+  },
+  "volume_relative_error": 0,
+  "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+}

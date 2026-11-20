@@ -1,0 +1,85 @@
+{
+  "models": [
+    {
+      "id": "01_catenoid",
+      "kind": "catenoid",
+      "parameters": {}
+    },
+    {
+      "id": "02_drop_60",
+      "kind": "drop",
+      "parameters": {
+        "theta_deg": 60
+      }
+    },
+    {
+      "id": "03_drop_120",
+      "kind": "drop",
+      "parameters": {
+        "theta_deg": 120
+      }
+    },
+    {
+      "id": "04_bridge_cylinder",
+      "kind": "bridge",
+      "parameters": {}
+    },
+    {
+      "id": "05_bridge_stretched",
+      "kind": "bridge",
+      "parameters": {
+        "height": 1.2
+      }
+    },
+    {
+      "id": "06_drop_gravity",
+      "kind": "gravity",
+      "parameters": {
+        "bond": 0.145188
+      }
+    },
+    {
+      "id": "07_patterned_nominal",
+      "kind": "patterned",
+      "parameters": {
+        "pad_radius": 0.5,
+        "mask_theta_deg": 120
+      }
+    },
+    {
+      "id": "08_patterned_overfill",
+      "kind": "patterned",
+      "parameters": {
+        "volume": 0.9,
+        "pad_radius": 0.5,
+        "mask_theta_deg": 120
+      }
+    },
+    {
+      "id": "09_hard_pad",
+      "kind": "hard_pad",
+      "parameters": {
+        "pad_radius": 0.5
+      }
+    },
+    {
+      "id": "10_pin_fillet",
+      "kind": "fillet",
+      "parameters": {}
+    },
+    {
+      "id": "11_pin_offset",
+      "kind": "fillet",
+      "parameters": {
+        "offset": 0.3
+      }
+    },
+    {
+      "id": "12_pin_underfill",
+      "kind": "fillet",
+      "parameters": {
+        "volume": 0.14
+      }
+    }
+  ]
+}

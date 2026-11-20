@@ -1,0 +1,11 @@
+-e ./pcbsim_pipeline
+
+# Native model generation + PCB pipeline
+numpy>=1.26,<3
+scipy>=1.11,<2
+
+# PCB CAD support
+cadquery>=2.8,<2.9
+
+# Pipeline tests
+pytest>=8,<10

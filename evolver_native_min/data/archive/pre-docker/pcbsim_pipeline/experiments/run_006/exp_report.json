@@ -1,0 +1,419 @@
+{
+  "code_sha256": {
+    "__init__.py": "70ce4fb44344f8c0683e93b9c8007446e18819503b7a20c9727f392bef38f72d",
+    "_vendor\\__init__.py": "54ca9dd9997ee7fb038d009c4f386946a45ebb817392e9f7367465bc15b888b8",
+    "_vendor\\evolver_native\\__init__.py": "5ccf0653313b9ffa97c655f57c24d0b791577235d6ceb1891df3ceacb7ef954e",
+    "_vendor\\evolver_native\\geometry.py": "c233dfd2dce7eb51c5f3b4b9c8682b9a2235e84b178216c58ac1601cc357fd9a",
+    "_vendor\\evolver_native\\models.py": "9f3303a842e25b8fe3e5b49031ce27efb6ce8eef5f98d5a6c23a24947afde57d",
+    "_vendor\\evolver_native\\native.py": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+    "cad.py": "4d7b0c3cdc185cff52c7211a4745be6b768502e5f620131a0bbaf21e49d38cd5",
+    "cli.py": "b79c1b9625763c058960135ffdd350e1cc7e92d96d8476240d2f123df1a2b35d",
+    "common.py": "fe904673c9d15c4b598f45c81a58fe33b78301c9244bb93cb40bbe8b363bb3ae",
+    "components\\__init__.py": "d3083989f41944456791eda5212d2d8d47b784817ed05ef7d9035c53345dcc70",
+    "components\\cad_converter.py": "1a5ebd1ae154253211c2fca16972cec9be37948aa252272cbabf63fe4b4a2dd8",
+    "components\\cad_extractor.py": "4ef61b59b1fb31f66b0d0228df8db9763d527ba1a1a6e9d26470c3c6a78121d2",
+    "components\\calibration.py": "dc8d25dbfde7c99d1888ecea1385e9a9fbc3302b7ea741e036e064761137f48f",
+    "components\\evaluation.py": "83ff288eaf6d5a2030e1b09fa42b4bba677f6e50a6051e5d253447874886bcd4",
+    "components\\experiment_manager.py": "0afd7cb44937d2213d19786026dedfad8caf8294c1d62959b6672f7890f41af8",
+    "components\\fe_generator.py": "8a4108c72cbd87410e8331a7e408a00221975a5d48790de3053f761066e73c36",
+    "components\\material_manager.py": "97e8e4cd36c365b41e3c11610b5f696980e1334a3aa37e29ab1cf38b76d9d34c",
+    "components\\surface_evolver_runner.py": "52e8e1b1f1b39d64259a8d2e32355cf8cd4efce5b44ce09da16a132addd10568",
+    "doctor.py": "15ab145c96f27c08d6693fbe132ecc4e68289f4a3669060fca3fb54bbaf2e0c7",
+    "mesh.py": "ce52c27651a661eed2f9e7ec2f01a7cae2ebed7e5b955c52d54f4e73a743f01d"
+  },
+  "components": {
+    "cad_converter": {
+      "assembly_structure_policy": "Imported XCAF assembly tree retained; solder added as a separate named child",
+      "component": "cad_converter",
+      "duration_seconds": 59.81696530000045,
+      "end_time": "2026-11-11T14:33:34.508+00:00",
+      "geometric_check": {
+        "maximum_vertex_deviation_mm": 0.0,
+        "method": "Barycentric bound from corresponding planar-triangle vertices",
+        "same_triangle_connectivity": true,
+        "surface_deviation_bound_mm": 0.0
+      },
+      "local_to_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -8.89
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          24.13
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.05
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "mesh_sha256": "5d21cd56967a4348acf3353f3094904c45b6d8f74805857ce51bde1530bd6989",
+      "mesh_validation": {
+        "boundary_edge_count": 0,
+        "bounds_mm": [
+          [
+            -0.7,
+            -0.7,
+            -1.1
+          ],
+          [
+            0.7,
+            0.7,
+            0.05708424408979044
+          ]
+        ],
+        "closed": true,
+        "connected_components": 1,
+        "degenerate_faces": 0,
+        "duplicate_faces": 0,
+        "edge_count": 3840,
+        "face_count": 2560,
+        "inconsistent_orientation_edges": 0,
+        "minimum_triangle_area_mm2": 5.264175887893869e-07,
+        "nonmanifold_edge_count": 0,
+        "self_intersections_checked": false,
+        "signed_volume_mm3": 0.43219016502150925,
+        "surface_area_mm2": 8.648830945358348,
+        "topological_pass": true,
+        "unused_vertices": 0,
+        "vertex_count": 1280
+      },
+      "original_geometry_preserved": true,
+      "original_interference_checked": true,
+      "original_interference_checks": [
+        {
+          "original_solid_index": 0,
+          "volume_mm3": 0.0
+        },
+        {
+          "original_solid_index": 7,
+          "volume_mm3": 0.0
+        },
+        {
+          "original_solid_index": 379,
+          "volume_mm3": 0.0
+        }
+      ],
+      "original_solid_count": 420,
+      "output_sha256": {
+        "combined_step": "a43aed99bbe753991d40791ace3607690e3fd4b28eb2ee028c7b9a8c2fcc5a4b",
+        "solder_step": "040b0491fef2e0d13e0004689f1d2c8a21a1a99603247eea6f29d0c2566c4458",
+        "world_mesh": "635cd4aff7a933fa99535fe05e603e70f51b18eb71094a4a8298e5bcf1537ca3"
+      },
+      "output_solid_count": 421,
+      "outputs": {
+        "combined_step": "output\\pcb_with_solder.step",
+        "solder_step": "output\\solder_only.step",
+        "world_mesh": "output\\solder_world.off"
+      },
+      "preservation_check": "Every original solid matched by volume, center, bounds and face count; no boolean operations modify originals",
+      "reopened_geometric_check": {
+        "maximum_vertex_deviation_mm": 7.155993760861696e-13,
+        "method": "Barycentric bound from corresponding planar-triangle vertices",
+        "same_triangle_connectivity": true,
+        "surface_deviation_bound_mm": 7.155993760861696e-13
+      },
+      "schema_version": 1,
+      "self_intersections_checked": true,
+      "smoothing_performed": false,
+      "solder_volume_mm3": 0.4321901650215083,
+      "source_sha256": "5426d6ba3c4865ab9a7572f9e18d1065e1771cbc132d6f2ae0a6c3b9ee88757a",
+      "start_time": "2026-11-11T14:32:34.691+00:00",
+      "status": "success",
+      "step_reopened": true
+    },
+    "cad_extractor": {
+      "component": "cad_extractor",
+      "connection_count": 40,
+      "duration_seconds": 18.103939900000114,
+      "end_time": "2026-11-11T14:31:59.202+00:00",
+      "output_sha256": {
+        "connections": "81434fd810898f5a79f18e8c3dd33541ceb120a493c2076a2e8a3c10aa527beb",
+        "extracted_step": "d5d5a4477c264f0da64d2840be632f1b5fa4a0e2ffb8fd04d91c646b58d171dc",
+        "geometry": "ed91ee3b6f1e55bc659656421cd7c349b39dd7832100042457af88140deffefc"
+      },
+      "outputs": {
+        "connections": "geometry\\connections.json",
+        "extracted_step": "geometry\\extracted.step",
+        "geometry": "geometry\\geometry.json"
+      },
+      "schema_version": 1,
+      "selected_pin_index": 1,
+      "start_time": "2026-11-11T14:31:41.098+00:00",
+      "status": "success"
+    },
+    "evaluation": {
+      "component": "evaluation",
+      "duration_seconds": 0.2715799999969022,
+      "end_time": "2026-11-11T14:33:34.942+00:00",
+      "measurements": {
+        "scope": "No agreement with real measurements has been established",
+        "status": "not_provided"
+      },
+      "note": "Checks are scoped. Passing topology/numerical checks is not proof of physical correctness.",
+      "output_sha256": {
+        "evaluation": "3a21e7f8d4e7c2dff1e191fd247abe89a5ab78af8c0abbc0b5362e564b900174"
+      },
+      "outputs": {
+        "evaluation": "evaluation\\automated_test_results.json"
+      },
+      "passed": true,
+      "physical_validation": false,
+      "schema_version": 1,
+      "start_time": "2026-11-11T14:33:34.671+00:00",
+      "status": "success",
+      "tests": [
+        {
+          "details": {
+            "extracted_step_hash_verified": true,
+            "hole_preserved": true
+          },
+          "id": "GEOM-T01",
+          "name": "Extracted geometry provenance and hole preservation",
+          "passed": true
+        },
+        {
+          "details": {
+            "boundary_edge_count": 0,
+            "bounds_mm": [
+              [
+                -0.7,
+                -0.7,
+                -1.1
+              ],
+              [
+                0.7,
+                0.7,
+                0.05009302576102203
+              ]
+            ],
+            "closed": true,
+            "connected_components": 1,
+            "degenerate_faces": 0,
+            "duplicate_faces": 0,
+            "edge_count": 960,
+            "face_count": 640,
+            "inconsistent_orientation_edges": 0,
+            "minimum_triangle_area_mm2": 0.0013421356237309412,
+            "nonmanifold_edge_count": 0,
+            "self_intersections_checked": false,
+            "signed_volume_mm3": 0.43219016502150914,
+            "surface_area_mm2": 8.644690809607578,
+            "topological_pass": true,
+            "unused_vertices": 0,
+            "vertex_count": 320
+          },
+          "id": "FE-T01",
+          "name": "Generated FE hash and closed initial topology",
+          "passed": true
+        },
+        {
+          "details": {
+            "mesh": {
+              "boundary_edge_count": 0,
+              "bounds_mm": [
+                [
+                  -0.7,
+                  -0.7,
+                  -1.1
+                ],
+                [
+                  0.7,
+                  0.7,
+                  0.05708424408979044
+                ]
+              ],
+              "closed": true,
+              "connected_components": 1,
+              "degenerate_faces": 0,
+              "duplicate_faces": 0,
+              "edge_count": 3840,
+              "face_count": 2560,
+              "inconsistent_orientation_edges": 0,
+              "minimum_triangle_area_mm2": 5.264175887893869e-07,
+              "nonmanifold_edge_count": 0,
+              "self_intersections_checked": false,
+              "signed_volume_mm3": 0.43219016502150925,
+              "surface_area_mm2": 8.648830945358348,
+              "topological_pass": true,
+              "unused_vertices": 0,
+              "vertex_count": 1280
+            },
+            "numerical_pass": true,
+            "physical_validation": false
+          },
+          "id": "SIM-T01",
+          "name": "Native execution, convergence and solder mesh",
+          "passed": true
+        },
+        {
+          "details": {
+            "original_solid_count": 420,
+            "output_solid_count": 421,
+            "roundtrip_receipt_verified": true,
+            "step_hash_verified": true
+          },
+          "id": "CAD-T09",
+          "name": "STEP round-trip receipt, hash and original-solid preservation",
+          "passed": true
+        }
+      ]
+    },
+    "fe_generator": {
+      "component": "fe_generator",
+      "duration_seconds": 0.10121719999733614,
+      "end_time": "2026-11-11T14:31:59.337+00:00",
+      "mesh_validation": {
+        "boundary_edge_count": 0,
+        "bounds_mm": [
+          [
+            -0.7,
+            -0.7,
+            -1.1
+          ],
+          [
+            0.7,
+            0.7,
+            0.05009302576102203
+          ]
+        ],
+        "closed": true,
+        "connected_components": 1,
+        "degenerate_faces": 0,
+        "duplicate_faces": 0,
+        "edge_count": 960,
+        "face_count": 640,
+        "inconsistent_orientation_edges": 0,
+        "minimum_triangle_area_mm2": 0.0013421356237309412,
+        "nonmanifold_edge_count": 0,
+        "self_intersections_checked": false,
+        "signed_volume_mm3": 0.43219016502150914,
+        "surface_area_mm2": 8.644690809607578,
+        "topological_pass": true,
+        "unused_vertices": 0,
+        "vertex_count": 320
+      },
+      "native_executed": false,
+      "output_sha256": {
+        "initial_mesh": "ca25a9c4118e7292d37f52d9736303ab9f1ec6fdd33f1d95fe2f438a0dbf8566",
+        "model": "7fa31206edb8db4175c7e20a5ba1d6061e97ea5b7f013e0ce3ac9d93bf9831b2",
+        "model_metadata": "e53e45dbf7f39874f11c4732da60b4882895cf6d24b29a5dd673778d49b7e0be"
+      },
+      "outputs": {
+        "initial_mesh": "fe\\initial_mesh.off",
+        "model": "fe\\model.fe",
+        "model_metadata": "fe\\model.json"
+      },
+      "schema_version": 1,
+      "start_time": "2026-11-11T14:31:59.236+00:00",
+      "status": "success"
+    },
+    "material_manager": {
+      "component": "material_manager",
+      "duration_seconds": 0.015891800001554657,
+      "end_time": "2026-11-11T14:31:59.230+00:00",
+      "output_sha256": {
+        "parameters": "0948ed7f28f114cee571f73904da81f5527eeed47d8b4b11d2a30abd3b45525b"
+      },
+      "outputs": {
+        "parameters": "parameters\\materials.json"
+      },
+      "physical_validation": false,
+      "schema_version": 1,
+      "start_time": "2026-11-11T14:31:59.215+00:00",
+      "status": "success"
+    },
+    "surface_evolver": {
+      "backend": "vendored_evolver_native_min_adapter",
+      "backend_source_sha256": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+      "command": [
+        "C:\\Evolver\\evolver.exe",
+        "-x",
+        "-fC:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006\\simulation\\run.cmd",
+        "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006\\fe\\model.fe"
+      ],
+      "command_sha256": "2049a986368da106737b3c92024694c944244e48aae4e12056737678c9bbfe2a",
+      "component": "surface_evolver",
+      "duration_seconds": 35.322737999998935,
+      "end_time": "2026-11-11T14:32:34.675+00:00",
+      "ended_at": "2026-11-11T14:32:34.671+00:00",
+      "executable": "C:\\Evolver\\evolver.exe",
+      "executable_sha256": "c669f120c1d32536bc54d7a0f69e71f5e2c3c802c132b4419c028d692f024202",
+      "model_sha256": "7fa31206edb8db4175c7e20a5ba1d6061e97ea5b7f013e0ce3ac9d93bf9831b2",
+      "native_evolver_executed": true,
+      "numerical_pass": true,
+      "numpy_version": "2.5.4",
+      "output_sha256": {
+        "commands": "2049a986368da106737b3c92024694c944244e48aae4e12056737678c9bbfe2a",
+        "mesh": "5d21cd56967a4348acf3353f3094904c45b6d8f74805857ce51bde1530bd6989",
+        "mesh_arrays": "be9644c96a9ae12f7e4e657c9c5ab578ffd489c215d1b0540a721ee55f7c5949",
+        "metrics": "ce1e0ad0305f7099cd834730b0022f95e7e7d890e90f42f9d4036c59d438c3fd",
+        "model_snapshot": "7fa31206edb8db4175c7e20a5ba1d6061e97ea5b7f013e0ce3ac9d93bf9831b2",
+        "stdout": "789bdb8448c513d1969010fb7d3017fc603b50664ec9ffd668e398397c73dc22"
+      },
+      "outputs": {
+        "commands": "simulation\\run.cmd",
+        "mesh": "simulation\\solder_mesh.off",
+        "mesh_arrays": "simulation\\mesh.npz",
+        "metrics": "simulation\\metrics.json",
+        "model_snapshot": "simulation\\input_model.fe",
+        "stdout": "simulation\\stdout.log"
+      },
+      "physical_validation": false,
+      "platform": "Windows-11-10.0.26200-SP0",
+      "python_version": "3.12.10",
+      "returncode": 0,
+      "schema_version": 1,
+      "seed": 0,
+      "solver_banner": "Surface Evolver Version 2.70, August 25, 2013; Windows OpenGL, 32-bit",
+      "start_time": "2026-11-11T14:31:59.353+00:00",
+      "started_at": "2026-11-11T14:31:59.380+00:00",
+      "status": "success",
+      "warnings": []
+    }
+  },
+  "duration_seconds": 114.1353522999998,
+  "end_time": "2026-11-11T14:33:34.950+00:00",
+  "environment": {
+    "packages": {
+      "cadquery": "2.8.0",
+      "cadquery-ocp": "7.9.3.1.1",
+      "numpy": "2.5.4",
+      "pytest": "9.2.0",
+      "scipy": "1.18.1"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10"
+  },
+  "execution_scope": "full",
+  "experiment_dir": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006",
+  "experiment_id": "run_006",
+  "requested_steps": [
+    "cad_extractor",
+    "material_manager",
+    "fe_generator",
+    "surface_evolver",
+    "cad_converter",
+    "evaluation"
+  ],
+  "saved_inputs": {
+    "input/config.json": "ef8f1f04246b72ab1361a973daf3970452d312750a4e88ce41915c7067c37a40",
+    "input/config.original.json": "1f84f7e10fb600b7de0bebc448452e995c67b1d6e494a3edde7819dde3836b21",
+    "input/original.step": "5426d6ba3c4865ab9a7572f9e18d1065e1771cbc132d6f2ae0a6c3b9ee88757a"
+  },
+  "schema_version": 1,
+  "start_time": "2026-11-11T14:31:40.815+00:00",
+  "status": "completed"
+}

@@ -1,0 +1,111 @@
+{
+  "component": "evaluation",
+  "measurements": {
+    "scope": "No agreement with real measurements has been established",
+    "status": "not_provided"
+  },
+  "note": "Checks are scoped. Passing topology/numerical checks is not proof of physical correctness.",
+  "outputs": {
+    "evaluation": "/data/experiments/run_20261120_194653_c197baad/evaluation/automated_test_results.json"
+  },
+  "passed": true,
+  "physical_validation": false,
+  "schema_version": 1,
+  "status": "success",
+  "tests": [
+    {
+      "details": {
+        "extracted_step_hash_verified": true,
+        "hole_preserved": true
+      },
+      "id": "GEOM-T01",
+      "name": "Extracted geometry provenance and hole preservation",
+      "passed": true
+    },
+    {
+      "details": {
+        "boundary_edge_count": 0,
+        "bounds_mm": [
+          [
+            -0.7,
+            -0.7,
+            -1.1
+          ],
+          [
+            0.7,
+            0.7,
+            0.05009302576102203
+          ]
+        ],
+        "closed": true,
+        "connected_components": 1,
+        "degenerate_faces": 0,
+        "duplicate_faces": 0,
+        "edge_count": 960,
+        "face_count": 640,
+        "inconsistent_orientation_edges": 0,
+        "minimum_triangle_area_mm2": 0.001342135623730939,
+        "nonmanifold_edge_count": 0,
+        "self_intersections_checked": false,
+        "signed_volume_mm3": 0.43219016502150914,
+        "surface_area_mm2": 8.644690809607578,
+        "topological_pass": true,
+        "unused_vertices": 0,
+        "vertex_count": 320
+      },
+      "id": "FE-T01",
+      "name": "Generated FE hash and closed initial topology",
+      "passed": true
+    },
+    {
+      "details": {
+        "mesh": {
+          "boundary_edge_count": 0,
+          "bounds_mm": [
+            [
+              -0.7,
+              -0.7,
+              -1.1
+            ],
+            [
+              0.7,
+              0.7,
+              0.057085120109101856
+            ]
+          ],
+          "closed": true,
+          "connected_components": 1,
+          "degenerate_faces": 0,
+          "duplicate_faces": 0,
+          "edge_count": 3840,
+          "face_count": 2560,
+          "inconsistent_orientation_edges": 0,
+          "minimum_triangle_area_mm2": 3.8368241626612746e-07,
+          "nonmanifold_edge_count": 0,
+          "self_intersections_checked": false,
+          "signed_volume_mm3": 0.43219016502150936,
+          "surface_area_mm2": 8.648839846483378,
+          "topological_pass": true,
+          "unused_vertices": 0,
+          "vertex_count": 1280
+        },
+        "numerical_pass": true,
+        "physical_validation": false
+      },
+      "id": "SIM-T01",
+      "name": "Native execution, convergence and solder mesh",
+      "passed": true
+    },
+    {
+      "details": {
+        "original_solid_count": 420,
+        "output_solid_count": 421,
+        "roundtrip_receipt_verified": true,
+        "step_hash_verified": true
+      },
+      "id": "CAD-T09",
+      "name": "STEP round-trip receipt, hash and original-solid preservation",
+      "passed": true
+    }
+  ]
+}

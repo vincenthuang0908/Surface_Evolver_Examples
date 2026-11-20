@@ -1,0 +1,122 @@
+[
+  {
+    "model": "01_catenoid",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.016502598925393675,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "02_drop_60",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0010106364747980428,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "03_drop_120",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0010106364747980428,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "04_bridge_cylinder",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.016502598925393675,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "05_bridge_stretched",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.01973488645581047,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "06_drop_gravity",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0010106364747980428,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "07_patterned_nominal",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0010106364747980428,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "08_patterned_overfill",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.001196197221646714,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "09_hard_pad",
+    "static_pass": true,
+    "n_vertices": 193,
+    "n_faces": 360,
+    "boundary_edges": 24,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0010106364747980428,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "10_pin_fillet",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0023828894331698997,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "11_pin_offset",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0014979167790711396,
+    "native_syntax_checked": false
+  },
+  {
+    "model": "12_pin_underfill",
+    "static_pass": true,
+    "n_vertices": 216,
+    "n_faces": 384,
+    "boundary_edges": 48,
+    "nonmanifold_edges": 0,
+    "min_triangle_area": 0.0022062355518629117,
+    "native_syntax_checked": false
+  }
+]

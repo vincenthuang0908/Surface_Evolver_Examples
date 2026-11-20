@@ -1,0 +1,12 @@
+{
+  "component": "cad_extractor",
+  "connection_count": 40,
+  "outputs": {
+    "connections": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006\\geometry\\connections.json",
+    "extracted_step": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006\\geometry\\extracted.step",
+    "geometry": "C:\\Users\\vince\\OneDrive\\Documents\\vscode projects\\NIST Surface Evolver\\evolver_native_min\\pcbsim_pipeline\\experiments\\run_006\\geometry\\geometry.json"
+  },
+  "schema_version": 1,
+  "selected_pin_index": 1,
+  "status": "success"
+}

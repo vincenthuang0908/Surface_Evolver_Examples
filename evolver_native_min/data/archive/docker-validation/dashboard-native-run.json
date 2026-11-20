@@ -1,0 +1,23 @@
+{
+  "checks": {
+    "all_six_stages_passed": true,
+    "download_buttons_present": true,
+    "evaluation_pass": true,
+    "identical_mesh_to_run_001": true,
+    "identical_metrics_to_run_001": true,
+    "numerical_pass": true,
+    "process_finished": true,
+    "step_exports_present": true
+  },
+  "metrics": {
+    "energy_J": 5.545158737572654e-07,
+    "fillet_volume_mm3": 0.025000000000000078,
+    "free_surface_area_mm2": 1.132038939594548,
+    "maximum_height_above_pad_mm": 0.057085120109101856,
+    "pressure_Pa": 67.99228373401095,
+    "volume_mm3": 0.4321901650215093
+  },
+  "passed": true,
+  "run": "run_20261118_140139_45da8f69",
+  "seconds": 117.8036938410005
+}

@@ -1,0 +1,19 @@
+{
+  "directions": [
+    {
+      "maximum_distance_mm": 3.425812303030077e-05,
+      "mean_distance_mm": 2.299839554515296e-06,
+      "sample_count": 3840
+    },
+    {
+      "maximum_distance_mm": 3.7014950962413614e-05,
+      "mean_distance_mm": 2.2848290632269318e-06,
+      "sample_count": 3840
+    }
+  ],
+  "maximum_sampled_surface_distance_mm": 3.7014950962413614e-05,
+  "method": "Both meshes: every vertex and facet centroid to all triangles of the other mesh",
+  "passed": true,
+  "scope": "Sampled surface agreement; not a certified continuous Hausdorff bound. Does not establish vertex/triangulation identity.",
+  "tolerance_mm": 0.001
+}

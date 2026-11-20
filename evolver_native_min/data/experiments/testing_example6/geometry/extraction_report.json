@@ -1,0 +1,12 @@
+{
+  "component": "cad_extractor",
+  "connection_count": 40,
+  "outputs": {
+    "connections": "/data/experiments/testing_example6/geometry/connections.json",
+    "extracted_step": "/data/experiments/testing_example6/geometry/extracted.step",
+    "geometry": "/data/experiments/testing_example6/geometry/geometry.json"
+  },
+  "schema_version": 1,
+  "selected_pin_index": 1,
+  "status": "success"
+}

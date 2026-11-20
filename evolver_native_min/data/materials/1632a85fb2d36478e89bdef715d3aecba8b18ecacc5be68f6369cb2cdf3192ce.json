@@ -1,0 +1,24 @@
+{
+  "material": {
+    "alloy": null,
+    "density_kg_per_m3": 7400.0,
+    "name": "Pico tutorial solder",
+    "pin_contact_angle_deg": 80.0,
+    "provenance": {
+      "density_kg_per_m3": {
+        "basis": "assumed",
+        "source": "Illustrative Pico tutorial input"
+      },
+      "pin_contact_angle_deg": {
+        "basis": "assumed",
+        "source": "Illustrative Pico tutorial input"
+      },
+      "surface_tension_N_per_m": {
+        "basis": "assumed",
+        "source": "Illustrative Pico tutorial input"
+      }
+    },
+    "surface_tension_N_per_m": 0.5
+  },
+  "schema_version": 1
+}

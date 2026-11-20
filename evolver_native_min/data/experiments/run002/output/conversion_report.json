@@ -1,0 +1,106 @@
+{
+  "assembly_structure_policy": "Imported XCAF assembly tree retained; solder added as a separate named child",
+  "component": "cad_converter",
+  "duration_seconds": 59.26238577300137,
+  "geometric_check": {
+    "maximum_vertex_deviation_mm": 0.0,
+    "method": "Barycentric bound from corresponding planar-triangle vertices",
+    "same_triangle_connectivity": true,
+    "surface_deviation_bound_mm": 0.0
+  },
+  "local_to_world": [
+    [
+      1.0,
+      0.0,
+      0.0,
+      -8.89
+    ],
+    [
+      0.0,
+      1.0,
+      0.0,
+      24.13
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.05
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "mesh_sha256": "081266b2b976b9f1ea801b0e1794271bfe5acb1e3ddfa810552ede66cebc5e89",
+  "mesh_validation": {
+    "boundary_edge_count": 0,
+    "bounds_mm": [
+      [
+        -0.7,
+        -0.7,
+        -1.1
+      ],
+      [
+        0.7,
+        0.7,
+        0.057085120109101856
+      ]
+    ],
+    "closed": true,
+    "connected_components": 1,
+    "degenerate_faces": 0,
+    "duplicate_faces": 0,
+    "edge_count": 3840,
+    "face_count": 2560,
+    "inconsistent_orientation_edges": 0,
+    "minimum_triangle_area_mm2": 3.8368241626612746e-07,
+    "nonmanifold_edge_count": 0,
+    "self_intersections_checked": false,
+    "signed_volume_mm3": 0.43219016502150936,
+    "surface_area_mm2": 8.648839846483378,
+    "topological_pass": true,
+    "unused_vertices": 0,
+    "vertex_count": 1280
+  },
+  "original_geometry_preserved": true,
+  "original_interference_checked": true,
+  "original_interference_checks": [
+    {
+      "original_solid_index": 0,
+      "volume_mm3": 0.0
+    },
+    {
+      "original_solid_index": 7,
+      "volume_mm3": 0.0
+    },
+    {
+      "original_solid_index": 379,
+      "volume_mm3": 0.0
+    }
+  ],
+  "original_solid_count": 420,
+  "output_sha256": "d22e48fccc366f563dd0cab2a97345b13a43d31be49e65ac10fb21fe0ce85e97",
+  "output_solid_count": 421,
+  "outputs": {
+    "combined_step": "/data/experiments/run_20261118_140139_45da8f69/output/pcb_with_solder.step",
+    "solder_step": "/data/experiments/run_20261118_140139_45da8f69/output/solder_only.step",
+    "world_mesh": "/data/experiments/run_20261118_140139_45da8f69/output/solder_world.off"
+  },
+  "preservation_check": "Every original solid matched by volume, center, bounds and face count; no boolean operations modify originals",
+  "reopened_geometric_check": {
+    "maximum_vertex_deviation_mm": 6.921594301794651e-13,
+    "method": "Barycentric bound from corresponding planar-triangle vertices",
+    "same_triangle_connectivity": true,
+    "surface_deviation_bound_mm": 6.921594301794651e-13
+  },
+  "schema_version": 1,
+  "self_intersections_checked": true,
+  "smoothing_performed": false,
+  "solder_volume_mm3": 0.4321901650215079,
+  "source_sha256": "5426d6ba3c4865ab9a7572f9e18d1065e1771cbc132d6f2ae0a6c3b9ee88757a",
+  "status": "success",
+  "step_reopened": true
+}

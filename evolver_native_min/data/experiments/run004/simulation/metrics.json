@@ -1,0 +1,75 @@
+{
+  "barrel_volume_mm3": 0.40719016502150923,
+  "command_sha256": "2049a986368da106737b3c92024694c944244e48aae4e12056737678c9bbfe2a",
+  "consecutive_convergence_passes": 2.0,
+  "convergence_check_steps": 30,
+  "convergence_checks": 3.0,
+  "energy_J": 5.545158737572654e-07,
+  "energy_drift_relative": 7.313222191511701e-11,
+  "energy_scaled": 1.1090317475145308,
+  "fillet_volume_mm3": 0.025000000000000078,
+  "free_surface_area_mm2": 1.132038939594548,
+  "max_move_mm": 2.4597516541360164e-06,
+  "maximum_height_above_pad_mm": 0.057085120109101856,
+  "mesh": {
+    "boundary_edge_count": 0,
+    "bounds_mm": [
+      [
+        -0.7,
+        -0.7,
+        -1.1
+      ],
+      [
+        0.7,
+        0.7,
+        0.057085120109101856
+      ]
+    ],
+    "closed": true,
+    "connected_components": 1,
+    "degenerate_faces": 0,
+    "duplicate_faces": 0,
+    "edge_count": 3840,
+    "face_count": 2560,
+    "inconsistent_orientation_edges": 0,
+    "minimum_triangle_area_mm2": 3.8368241626612746e-07,
+    "nonmanifold_edge_count": 0,
+    "self_intersections_checked": false,
+    "signed_volume_mm3": 0.43219016502150936,
+    "surface_area_mm2": 8.648839846483378,
+    "topological_pass": true,
+    "unused_vertices": 0,
+    "vertex_count": 1280
+  },
+  "mesh_sha256": "081266b2b976b9f1ea801b0e1794271bfe5acb1e3ddfa810552ede66cebc5e89",
+  "model_sha256": "6b0569d2cdec51b7db602d852ee64993a60d78139a62d68c58ebc2f846472a2e",
+  "numerical_gate_scope": "Volume, fixed-final-mesh energy drift and displacement only. Not a Hessian stability, mesh-convergence, or experimental validation test.",
+  "numerical_pass": true,
+  "physical_validation": false,
+  "pin_height_limit_reached": false,
+  "pressure_Pa": 67.99228373401095,
+  "raw_evolver": {
+    "area": 8.648839846483389,
+    "complete": 1.0,
+    "convergence_checks": 3.0,
+    "convergence_passes": 2.0,
+    "energy": 1.1090317475145308,
+    "energy_drift": 7.313222191511701e-11,
+    "facets": 2560.0,
+    "initial_energy": 1.1098765750696664,
+    "initial_volume": 0.4321901650215092,
+    "max_move": 2.4597516541360164e-06,
+    "pressure": 0.1359845674680219,
+    "volume": 0.4321901650215093
+  },
+  "schema_version": 1,
+  "target_volume_mm3": 0.43219016502150925,
+  "tolerances": {
+    "energy_drift_relative": 1e-07,
+    "max_move_mm": 1e-05,
+    "volume_relative": 1e-07
+  },
+  "total_shell_area_mm2": 8.648839846483378,
+  "volume_mm3": 0.4321901650215093,
+  "volume_relative_error": 1.2844149572097538e-16
+}

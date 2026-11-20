@@ -1,0 +1,146 @@
+{
+  "checks": {
+    "all_six_stages": true,
+    "identical_docker_mesh": true,
+    "identical_docker_metrics": true,
+    "native_solver": true,
+    "numerical_and_cad_evaluation": true,
+    "preserved_420_solids_plus_solder": true,
+    "same_windows_input_and_settings_except_paths": true,
+    "strict_docker_reproduction": true,
+    "within_windows_metric_tolerances": true
+  },
+  "duration_seconds": 121.1504556559994,
+  "metrics": [
+    {
+      "docker_baseline": 0.057085120109101856,
+      "metric": "maximum_height_above_pad_mm",
+      "relative_difference_from_windows": 1.5346078859158866e-05,
+      "reorganized": 0.057085120109101856,
+      "windows": 0.05708424408979044,
+      "windows_relative_tolerance": 0.01,
+      "within_windows_tolerance": true
+    },
+    {
+      "docker_baseline": 0.025000000000000078,
+      "metric": "fillet_volume_mm3",
+      "relative_difference_from_windows": 0.0,
+      "reorganized": 0.025000000000000078,
+      "windows": 0.025000000000000078,
+      "windows_relative_tolerance": 1e-07,
+      "within_windows_tolerance": true
+    },
+    {
+      "docker_baseline": 0.4321901650215093,
+      "metric": "volume_mm3",
+      "relative_difference_from_windows": 0.0,
+      "reorganized": 0.4321901650215093,
+      "windows": 0.4321901650215093,
+      "windows_relative_tolerance": 1e-07,
+      "within_windows_tolerance": true
+    },
+    {
+      "docker_baseline": 1.132038939594548,
+      "metric": "free_surface_area_mm2",
+      "relative_difference_from_windows": 1.1621243483674974e-06,
+      "reorganized": 1.132038939594548,
+      "windows": 1.132037624026062,
+      "windows_relative_tolerance": 0.01,
+      "within_windows_tolerance": true
+    },
+    {
+      "docker_baseline": 67.99228373401095,
+      "metric": "pressure_Pa",
+      "relative_difference_from_windows": 0.0008234075565789545,
+      "reorganized": 67.99228373401095,
+      "windows": 68.04831523098461,
+      "windows_relative_tolerance": 0.01,
+      "within_windows_tolerance": true
+    },
+    {
+      "docker_baseline": 5.545158737572654e-07,
+      "metric": "energy_J",
+      "relative_difference_from_windows": 1.4874083753633724e-09,
+      "reorganized": 5.545158737572654e-07,
+      "windows": 5.545158745820569e-07,
+      "windows_relative_tolerance": 0.01,
+      "within_windows_tolerance": true
+    }
+  ],
+  "passed": true,
+  "previous_windows_sampled_surface_distance_mm": 3.7014950962413614e-05,
+  "strict_docker_comparison": {
+    "candidate_experiment": "reorg_baseline",
+    "checks": [
+      {
+        "name": "model_sha256",
+        "passed": true
+      },
+      {
+        "name": "command_sha256",
+        "passed": true
+      },
+      {
+        "name": "both_numerically_converged",
+        "passed": true
+      },
+      {
+        "absolute_difference": 0.0,
+        "allowed_difference": 1.1190317475145307e-06,
+        "candidate": 1.1090317475145308,
+        "name": "energy_scaled",
+        "passed": true,
+        "reference": 1.1090317475145308
+      },
+      {
+        "absolute_difference": 0.0,
+        "allowed_difference": 4.421901650215093e-07,
+        "candidate": 0.4321901650215093,
+        "name": "volume_mm3",
+        "passed": true,
+        "reference": 0.4321901650215093
+      },
+      {
+        "absolute_difference": 0.0,
+        "allowed_difference": 1.1420389395945478e-06,
+        "candidate": 1.132038939594548,
+        "name": "free_surface_area_mm2",
+        "passed": true,
+        "reference": 1.132038939594548
+      },
+      {
+        "absolute_difference": 0.0,
+        "allowed_difference": 6.708512010910185e-08,
+        "candidate": 0.057085120109101856,
+        "name": "maximum_height_above_pad_mm",
+        "passed": true,
+        "reference": 0.057085120109101856
+      },
+      {
+        "absolute_difference": 0.0,
+        "allowed_difference": 6.800228373401094e-05,
+        "candidate": 67.99228373401095,
+        "name": "pressure_Pa",
+        "passed": true,
+        "reference": 67.99228373401095
+      },
+      {
+        "bidirectional_vertex_distance_mm": 0.0,
+        "method": "One-to-one vertex correspondence plus equal triangle connectivity; supports renumbering, not unrelated remeshing",
+        "name": "solder_mesh",
+        "passed": true,
+        "same_triangle_connectivity_under_vertex_mapping": true,
+        "tolerance_mm": 1e-06
+      },
+      {
+        "method": "File-hash-verified round-trip receipts, common original geometry, solder volume and placement; solder shape is separately compared by the mesh check",
+        "name": "combined_step",
+        "passed": true
+      }
+    ],
+    "passed": true,
+    "reference_experiment": "run_001",
+    "schema_version": 1,
+    "status": "success"
+  }
+}

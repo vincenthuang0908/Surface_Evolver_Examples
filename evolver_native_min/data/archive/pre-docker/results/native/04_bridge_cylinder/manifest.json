@@ -1,0 +1,39 @@
+{
+  "backend": "surface_evolver",
+  "model": "C:\\...\\evolver_native_min\\models\\04_bridge_cylinder.fe",
+  "command_file": "C:\\...\\evolver_native_min\\results\\native\\04_bridge_cylinder\\run.cmd",
+  "model_sha256": "2991d580e03754d252e6a220bfd5f528b55f05ed09552dba2214e8ba0b03c026",
+  "command_sha256": "42c3500ca68230a50e2fae9d153c9a0e98e4bb651ce9585af0cfa44f120b12ad",
+  "native_evolver_executed": true,
+  "status": "executed",
+  "desired_command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\04_bridge_cylinder\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\04_bridge_cylinder.fe"
+  ],
+  "numerical_pass": false,
+  "physical_validation": false,
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\04_bridge_cylinder\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\04_bridge_cylinder.fe"
+  ],
+  "returncode": 0,
+  "wall_seconds": 12.166886000002705,
+  "metrics": {
+    "initial_energy": 6.500246700397049,
+    "initial_volume": -2.906869081673521,
+    "energy": 20.889362501736308,
+    "energy_drift": 2.745681754324383e-05,
+    "max_move": 0.005115570487604962,
+    "area": 20.889362501736308,
+    "facets": 6144.0,
+    "volume": 3.141592653589794,
+    "pressure": 2.215299258428174,
+    "complete": 1.0
+  },
+  "volume_relative_error": 2.8271597168564594e-16,
+  "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+}

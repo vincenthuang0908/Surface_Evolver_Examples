@@ -1,0 +1,48 @@
+{
+  "numerical_pass": true,
+  "outputs": [
+    {
+      "category": "Geometry",
+      "label": "Maximum height above pad",
+      "metric": "maximum_height_above_pad_mm",
+      "unit": "mm",
+      "value": 0.057085120109101856
+    },
+    {
+      "category": "Geometry",
+      "label": "Top-fillet volume",
+      "metric": "fillet_volume_mm3",
+      "unit": "mm\u00b3",
+      "value": 0.025000000000000078
+    },
+    {
+      "category": "Geometry",
+      "label": "Total solder volume",
+      "metric": "volume_mm3",
+      "unit": "mm\u00b3",
+      "value": 0.4321901650215093
+    },
+    {
+      "category": "Geometry",
+      "label": "Liquid\u2013air surface area",
+      "metric": "free_surface_area_mm2",
+      "unit": "mm\u00b2",
+      "value": 1.132038939594548
+    },
+    {
+      "category": "Geometry",
+      "label": "Mean apparent pin contact angle",
+      "metric": "pin_apparent_contact_angle_deg",
+      "unit": "\u00b0",
+      "value": 80.27992680703582
+    },
+    {
+      "category": "Derived model quantity",
+      "label": "Liquid\u2013air surface energy",
+      "metric": "liquid_air_surface_energy_J",
+      "unit": "J",
+      "value": 5.66019469797274e-07
+    }
+  ],
+  "schema_version": 1
+}

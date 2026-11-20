@@ -1,0 +1,84 @@
+{
+  "experiments_dir": "/data/experiments",
+  "inputs": {
+    "step_file": "/app/inputs/raspberry_pico_2H.step"
+  },
+  "schema_version": 1,
+  "steps": {
+    "cad_converter": {
+      "check_self_intersections": true,
+      "enabled": true,
+      "maximum_faces": 20000,
+      "mesh_tolerance_mm": 0.01,
+      "output_filename": "pcb_with_solder.step",
+      "preserve_original_geometry": true,
+      "sewing_tolerance_mm": 1e-07,
+      "validate_mesh": true
+    },
+    "cad_extractor": {
+      "enabled": true,
+      "pcb_section_size_mm": 3.0,
+      "selection": {
+        "include": [
+          "pad",
+          "hole",
+          "pin",
+          "pcb_section"
+        ],
+        "pin_index": 1,
+        "type": "through_hole_connection"
+      },
+      "solder_side": "top"
+    },
+    "evaluation": {
+      "absolute_tolerance": 1e-08,
+      "enabled": true,
+      "mesh_distance_tolerance_mm": 1e-06,
+      "relative_tolerance": 1e-06,
+      "require_numerical_pass": true
+    },
+    "fe_generator": {
+      "enabled": true,
+      "initial_perturbation_mm": 0.0,
+      "radial_segments": 5,
+      "segments_per_pin_side": 8
+    },
+    "material_manager": {
+      "enabled": true,
+      "material": {
+        "density_kg_per_m3": 7400.0,
+        "name": "illustrative_solder_not_calibrated",
+        "pin_contact_angle_deg": 80.0,
+        "surface_tension_N_per_m": 0.5
+      },
+      "simulation": {
+        "barrel_fill": "full",
+        "contact_angle_delta_deg": 0.0,
+        "fillet_volume_mm3": 0.025,
+        "gravity_m_per_s2": 0.0,
+        "pin_contact_line": "mobile",
+        "seed": 0,
+        "volume_multiplier": 1.0
+      }
+    },
+    "surface_evolver": {
+      "allow_warnings": false,
+      "conjugate_gradient": true,
+      "consecutive_convergence_checks": 2,
+      "convergence_check_steps": 30,
+      "edge_swaps": false,
+      "enabled": true,
+      "energy_drift_tolerance": 1e-07,
+      "executable": "auto",
+      "improve_free_surface_mesh": true,
+      "max_convergence_batches": 10,
+      "max_move_tolerance_mm": 1e-05,
+      "minimization_steps": 1000,
+      "refinements": 1,
+      "require_numerical_pass": true,
+      "timeout_seconds": 300,
+      "volume_relative_tolerance": 1e-07,
+      "warmup_steps": 30
+    }
+  }
+}

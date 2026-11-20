@@ -1,0 +1,12 @@
+{
+  "component": "cad_extractor",
+  "connection_count": 40,
+  "outputs": {
+    "connections": "/data/experiments/reorg_baseline/geometry/connections.json",
+    "extracted_step": "/data/experiments/reorg_baseline/geometry/extracted.step",
+    "geometry": "/data/experiments/reorg_baseline/geometry/geometry.json"
+  },
+  "schema_version": 1,
+  "selected_pin_index": 1,
+  "status": "success"
+}

@@ -1,0 +1,102 @@
+{
+  "candidate": "/data/experiments/docker_baseline",
+  "checks": [
+    {
+      "name": "all_six_stages",
+      "passed": true
+    },
+    {
+      "name": "same_input_step",
+      "passed": true
+    },
+    {
+      "name": "same_settings_except_paths",
+      "passed": true
+    },
+    {
+      "banner": "Surface Evolver Version 2.70a (Debian 2.70+ds-8+b1), August 27, 2013, 64-bit.",
+      "name": "real_native_solver",
+      "passed": true
+    },
+    {
+      "name": "evaluation",
+      "passed": true
+    },
+    {
+      "name": "numerical_convergence",
+      "passed": true
+    },
+    {
+      "candidate": 0.057085120109101856,
+      "name": "maximum_height_above_pad_mm",
+      "passed": true,
+      "reference": 0.05708424408979044,
+      "relative_difference": 1.5346078859158866e-05,
+      "relative_tolerance": 0.01
+    },
+    {
+      "candidate": 1.132038939594548,
+      "name": "free_surface_area_mm2",
+      "passed": true,
+      "reference": 1.132037624026062,
+      "relative_difference": 1.1621243483674974e-06,
+      "relative_tolerance": 0.01
+    },
+    {
+      "candidate": 5.545158737572654e-07,
+      "name": "energy_J",
+      "passed": true,
+      "reference": 5.545158745820569e-07,
+      "relative_difference": 1.4874083753633724e-09,
+      "relative_tolerance": 0.01
+    },
+    {
+      "candidate": 67.99228373401095,
+      "name": "pressure_Pa",
+      "passed": true,
+      "reference": 68.04831523098461,
+      "relative_difference": 0.0008234075565789545,
+      "relative_tolerance": 0.01
+    },
+    {
+      "candidate": 0.025000000000000078,
+      "name": "fillet_volume_mm3",
+      "passed": true,
+      "reference": 0.025000000000000078,
+      "relative_difference": 0.0,
+      "relative_tolerance": 1e-07
+    },
+    {
+      "candidate": 0.4321901650215093,
+      "name": "volume_mm3",
+      "passed": true,
+      "reference": 0.4321901650215093,
+      "relative_difference": 0.0,
+      "relative_tolerance": 1e-07
+    },
+    {
+      "maximum_distance_mm": 0.0016780397069103776,
+      "name": "mesh_nearest_vertex_distance",
+      "note": "Symmetric nearest-vertex distance, not a full surface Hausdorff bound",
+      "passed": false,
+      "tolerance_mm": 0.001
+    },
+    {
+      "name": "original_geometry_preserved",
+      "passed": true
+    },
+    {
+      "name": "reopen_solder_only.step",
+      "passed": true,
+      "solid_count": 1
+    },
+    {
+      "name": "reopen_pcb_with_solder.step",
+      "passed": true,
+      "solid_count": 421
+    }
+  ],
+  "passed": false,
+  "reference": "pcbsim_pipeline/experiments/run_006",
+  "scope": "Software/numerical/CAD comparison; not experimental validation"
+}

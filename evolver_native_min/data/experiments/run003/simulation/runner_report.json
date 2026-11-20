@@ -1,0 +1,38 @@
+{
+  "backend": "vendored_evolver_native_min_adapter",
+  "backend_source_sha256": "64dc75aafb948163868c280568deb005a0de08652b62c4ee461f90d7203da820",
+  "command": [
+    "/usr/bin/evolver-nox-d",
+    "-x",
+    "-f/data/experiments/reorg_baseline/simulation/run.cmd",
+    "/data/experiments/reorg_baseline/fe/model.fe"
+  ],
+  "command_sha256": "2049a986368da106737b3c92024694c944244e48aae4e12056737678c9bbfe2a",
+  "component": "surface_evolver",
+  "duration_seconds": 37.82155259799947,
+  "ended_at": "2026-11-18T14:50:19.283+00:00",
+  "executable": "/usr/bin/evolver-nox-d",
+  "executable_sha256": "56d65ffff03126c296d8984362793642140be11cb406dfb78207e2f1b237827a",
+  "model_sha256": "6b0569d2cdec51b7db602d852ee64993a60d78139a62d68c58ebc2f846472a2e",
+  "native_evolver_executed": true,
+  "numerical_pass": true,
+  "numpy_version": "2.3.5",
+  "outputs": {
+    "commands": "/data/experiments/reorg_baseline/simulation/run.cmd",
+    "mesh": "/data/experiments/reorg_baseline/simulation/solder_mesh.off",
+    "mesh_arrays": "/data/experiments/reorg_baseline/simulation/mesh.npz",
+    "metrics": "/data/experiments/reorg_baseline/simulation/metrics.json",
+    "model_snapshot": "/data/experiments/reorg_baseline/simulation/input_model.fe",
+    "stdout": "/data/experiments/reorg_baseline/simulation/stdout.log"
+  },
+  "physical_validation": false,
+  "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.36",
+  "python_version": "3.12.16",
+  "returncode": 0,
+  "schema_version": 1,
+  "seed": 0,
+  "solver_banner": "Surface Evolver Version 2.70a (Debian 2.70+ds-8+b1), August 27, 2013, 64-bit.",
+  "started_at": "2026-11-18T14:49:41.406+00:00",
+  "status": "success",
+  "warnings": []
+}

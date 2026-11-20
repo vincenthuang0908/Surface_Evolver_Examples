@@ -1,0 +1,39 @@
+{
+  "backend": "surface_evolver",
+  "model": "C:\\...\\evolver_native_min\\models\\06_drop_gravity.fe",
+  "command_file": "C:\\...\\evolver_native_min\\results\\native\\06_drop_gravity\\run.cmd",
+  "model_sha256": "6d8ce0dd22c484e4a38a7075c75f0a30156473284bd061d03774d92761078e9b",
+  "command_sha256": "42c3500ca68230a50e2fae9d153c9a0e98e4bb651ce9585af0cfa44f120b12ad",
+  "native_evolver_executed": true,
+  "status": "executed",
+  "desired_command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\06_drop_gravity\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\06_drop_gravity.fe"
+  ],
+  "numerical_pass": false,
+  "physical_validation": false,
+  "command": [
+    "C:\\Evolver\\evolver.exe",
+    "-x",
+    "-fC:\\...\\evolver_native_min\\results\\native\\06_drop_gravity\\run.cmd",
+    "C:\\...\\evolver_native_min\\models\\06_drop_gravity.fe"
+  ],
+  "returncode": 0,
+  "wall_seconds": 8.778695599998173,
+  "metrics": {
+    "initial_energy": 0.9872865021437998,
+    "initial_volume": 0.1958235881057162,
+    "energy": 0.8965279804068597,
+    "energy_drift": 0.00031564667694028914,
+    "max_move": 0.004473068115130166,
+    "area": 1.4072396094542845,
+    "facets": 5760.0,
+    "volume": 0.19999999999999754,
+    "pressure": 2.9219985328463385,
+    "complete": 1.0
+  },
+  "volume_relative_error": 1.2351231148954867e-14,
+  "numerical_gate_scope": "volume, fixed-mesh energy drift, displacement only; Hessian and mesh study still required"
+}

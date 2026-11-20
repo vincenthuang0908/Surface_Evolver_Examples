@@ -1,0 +1,67 @@
+{
+  "connection_count": 40,
+  "input_sha256": "5426d6ba3c4865ab9a7572f9e18d1065e1771cbc132d6f2ae0a6c3b9ee88757a",
+  "observed_geometry": {
+    "coordinate_system": {
+      "description": "Origin at pad/hole center on top copper; local +Z points away from board",
+      "frame": "local_pad_top",
+      "local_to_world": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          -8.89
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          24.13
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.05
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "hole": {
+      "depth_mm": 1.1,
+      "pcb_drill_radius_mm": 0.55,
+      "provenance": "Inner plated bore; PCB drill is separately recorded",
+      "radius_mm": 0.5
+    },
+    "model_family": "rectangular_pin_circular_plated_hole",
+    "pad": {
+      "outer_radius_mm": 0.7,
+      "provenance": "Concentric cylindrical outer boundary of matched source pad solid",
+      "top_z_mm": 0.0
+    },
+    "pin": {
+      "center_xy_mm": [
+        0.0,
+        0.0
+      ],
+      "cross_section": "rectangle",
+      "depth_mm": 0.6400000000000006,
+      "max_straight_height_mm": 0.15000000000000108,
+      "provenance": "Bounding box and four planar sidewalls; beveled tip excluded from allowable wetting height",
+      "width_mm": 0.6400000000000006
+    },
+    "units": "mm",
+    "validation": {
+      "hole_preserved": true,
+      "step_reopened": true,
+      "void_overlap_mm3": 0.0
+    }
+  },
+  "scope": "Actual supplied STEP extraction; selected connection is geometric index 1, not an electrical pin number.",
+  "selected_pin_index": 1
+}

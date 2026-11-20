@@ -29,5 +29,3 @@ docker compose -f docker/compose.yaml run --rm pipeline python run_pipeline.py -
 ```
 
 The [setup guide](documentation/SETUP.md) covers Docker commands and data storage. The [pipeline guide](documentation/RUN_PIPELINE.md) covers inputs, calibration, evaluation, and model limits. The model assumes a fully filled plated barrel, a rectangular pin, a circular plated hole, and a top-side fillet at static equilibrium.
-
-Git ignores `data/`, which holds local uploads, results, and optional archives. The tutorial includes the Run 6 preset for a fresh checkout.
